@@ -1,0 +1,14 @@
+# Agent graph
+langgraph==1.1.10
+langgraph-checkpoint-sqlite==3.0.3  # upgrade path for the checkpointer noted in graph.py; not wired in yet
+
+# Model providers + search tool (used as Scout/Content get their real logic)
+langchain-anthropic==1.4.3
+langchain-openai==1.2.1
+langchain-tavily==0.2.18
+
+# Discord layer
+discord.py==2.7.1
+python-dotenv==1.2.2
+
+# Not yet added: Producer's video-tool deps (pillow, moviepy, edge-tts, HeyGen via requests) -- pin these once tools.py is actually implemented.
