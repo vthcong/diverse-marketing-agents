@@ -2,34 +2,37 @@
 from __future__ import annotations
 
 import operator
-from typing import Optional, TypedDict
+from typing import Literal, TypedDict
 
-from typing_extensions import Annotated, Literal
+from typing_extensions import Annotated
 
 Persona = Literal["lead", "scout", "content", "producer"]
-
-Stage = Literal["new", "scouted", "draft_chosen", "complete"]
-
+Speaker = Literal["user", "lead", "scout", "content", "producer"]
 VideoTier = Literal["basic", "premium"]
 
 
 class SpeakerMessage(TypedDict):
-    """One agent's contribution, tagged with who said it.
-
-    The Discord layer posts each entry under its `speaker`'s webhook identity rather than inferring who spoke from context.
-    """
-
-    speaker: Persona
+    speaker: Speaker
     content: str
 
 
-class State(TypedDict):
-    request: str
-    scout_findings: Optional[str]
-    draft_options: Optional[list[str]]
-    chosen_draft: Optional[str]
-    video_tier: Optional[VideoTier]
-    video_url: Optional[str]
-    stage: Stage
-    # Reducer appends rather than overwrites, so every node's output accumulates into one ordered trail across the whole run.
+class State(TypedDict, total=False):
+    # Whole-thread transcript, user turns included. The reducer appends, so it accumulates for the life of the channel's thread; the Discord layer posts each agent message as its node finishes.
     messages: Annotated[list[SpeakerMessage], operator.add]
+
+    # Lead's one-paragraph statement of the job in progress, shared with every specialist.
+    brief: str
+
+    # Lead's routing decision for the current hop.
+    next_agent: Literal["scout", "content", "producer", "finish"]
+    task: str
+
+    # Shared workspace: written by the specialists' tools, read by everyone.
+    findings: str
+    drafts: list[str]
+    chosen_draft: str
+    video_script: str
+    video_tier: VideoTier
+    video_job_id: str
+    video_status: str  # "rendering" | "completed" | "failed" | "timeout"
+    video_url: str
