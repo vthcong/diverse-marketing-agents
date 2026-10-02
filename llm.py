@@ -9,7 +9,7 @@ from langchain_openai import ChatOpenAI
 from personas import PERSONAS, llm_kwargs, load_skill, load_team
 from state import Persona, State
 
-MAX_TOOL_ROUNDS = 8
+MAX_TOOL_ROUNDS = 15
 TRANSCRIPT_MESSAGES = 24
 TRANSCRIPT_CHARS = 900
 FINDINGS_CHARS = 6000

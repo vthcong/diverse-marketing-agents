@@ -6,6 +6,9 @@ load_dotenv()
 
 SELECTED_MODEL = "gpt-6-luna"
 
+# gpt-6-luna's Chat Completions endpoint rejects function tools while reasoning is on, so the three agents that call tools turn it off. Lead calls no tools and keeps reasoning, which its routing decisions benefit from.
+NO_REASONING = {"reasoning_effort": "none"}
+
 PERSONAS: dict[Persona, dict] = {
     "lead": {
         "model": SELECTED_MODEL,
@@ -15,12 +18,14 @@ PERSONAS: dict[Persona, dict] = {
     },
     "scout": {
         "model": SELECTED_MODEL,
+        **NO_REASONING,
         "role": "Researcher: finds current, sourced facts, trends and audience angles on the web.",
         "username": "Stark",
         "avatar_url": "https://cdn.discordapp.com/attachments/1553326533769302098/1553346557661810698/stark.jpg?ex=6ab8ea37&is=6ab798b7&hm=0b10f3a5ef6bbc67110e8c0d4d56138b9104bc018b44aee650db968fd1cbd08d&",
     },
     "content": {
         "model": SELECTED_MODEL,
+        **NO_REASONING,
         "temperature": 0.7,
         "role": "Copywriter: writes, revises and locks in the post copy.",
         "username": "Claire",
@@ -28,6 +33,7 @@ PERSONAS: dict[Persona, dict] = {
     },
     "producer": {
         "model": SELECTED_MODEL,
+        **NO_REASONING,
         "role": "Video producer: turns the chosen copy into a spoken script and renders the avatar video.",
         "username": "Paul",
         "avatar_url": "https://cdn.discordapp.com/attachments/1553326533769302098/1553346556718088222/paul.jpg?ex=6ab8ea36&is=6ab798b6&hm=ec846bc3ba380f703f1c61d43a3471a617bb110109aedf27fd208447a1314061&",

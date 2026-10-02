@@ -21,14 +21,31 @@ class Route(BaseModel):
     next: Literal["scout", "content", "producer", "finish"] = Field(description="Who acts next, or 'finish' to end this turn and wait for the user.")
     task: str = Field(description="A direct instruction for that specialist with everything they need; empty when next is 'finish'.")
     brief: str = Field(description="The updated one-paragraph brief for the job in progress; empty to keep the current brief.")
+    new_job: bool = Field(description="True only when the user asks for a new, separate deliverable (for example another video or post) while an earlier job's drafts or video are still in the workspace. It clears those, but keeps the research. False for edits, questions and a first job.")
     message: str = Field(description="What to say to the user right now; empty to stay silent.")
+
+
+MAX_REPLIES_PER_TURN = 2  # the longest legitimate case is content twice (write drafts, then record the pick); a third visit means lead and a specialist are going back and forth
+
+
+def replies_this_turn(state: State, persona: str) -> int:
+    count = 0
+    for m in reversed(state["messages"]):
+        if m["speaker"] == "user":
+            break
+        count += m["speaker"] == persona
+    return count
 
 
 async def lead(state: State) -> dict:
     router = LLMS["lead"].with_structured_output(Route)
     route = await router.ainvoke([system_prompt("lead"), HumanMessage(agent_context(state, "Fill in the routing form for the next step."))])
+    if route.next != "finish" and replies_this_turn(state, route.next) >= MAX_REPLIES_PER_TURN:
+        route.next, route.message = "finish", ""
 
     update: dict = {"next_agent": route.next, "task": route.task}
+    if route.new_job:
+        update.update(drafts=[], chosen_draft="", video_script="", video_job_id="", video_status="", video_url="")
     if route.brief:
         update["brief"] = route.brief
     if route.message:

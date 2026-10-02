@@ -18,7 +18,7 @@ load_dotenv()
 
 HEYGEN_BASE = "https://api.heygen.com"
 HEYGEN_RESOLUTION = "720p"  # every video is rendered at 720p
-RENDER_POLL_SECONDS = 10
+RENDER_POLL_SECONDS = 60
 RENDER_TIMEOUT_SECONDS = 15 * 60
 MAX_VIDEO_WORDS = 50  # HeyGen has no max-duration setting, so the script length is the only cap; at ~0.5 s per word this is about 25 seconds
 
