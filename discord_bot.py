@@ -3,6 +3,10 @@
 The bot's own login is only used to listen for messages. Every agent reply is posted through a per-channel webhook with username/avatar_url overridden to match whichever persona is speaking, so the channel looks like a team of separate people rather than one bot.
 
 Each Discord channel is one persistent LangGraph thread (thread_id = channel.id). Every user message becomes one graph turn: lead routes, specialists work, and each agent's message is posted the moment its node finishes rather than after the whole turn. Turns in the same channel run one at a time.
+
+Command:
+cd /Users/mac/Documents/Important/Self-study/agentic/diverse_marketing_agents
+/opt/miniconda3/envs/langchain/bin/python discord_bot.py
 """
 import asyncio
 import os
@@ -119,6 +123,8 @@ async def on_render_finished(thread_id: str, result: dict) -> None:
         await app.aupdate_state({"configurable": {"thread_id": thread_id}}, update, as_node="lead")
     await post_as(await get_webhook(client.get_channel(int(thread_id))), "producer", text)
 
+
+# discord.py announces each thing that happens over the connection as a named event: on_ready when login finishes, on_message for each new message
 
 @client.event
 async def on_ready():

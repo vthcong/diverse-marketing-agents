@@ -4,33 +4,32 @@ from state import Persona
 
 load_dotenv()
 
-MODEL_GPT_5_NANO = "gpt-5-nano"
-MODEL_GPT_6_LUNA = "gpt-6-luna"
+SELECTED_MODEL = "gpt-6-luna"
 
 PERSONAS: dict[Persona, dict] = {
     "lead": {
-        "model": MODEL_GPT_6_LUNA,
-        "role": "Team lead: reads every message, routes work to the right specialist, keeps the brief, and tells the user where things stand.",
-        "username": "Liam (Lead)",
+        "model": SELECTED_MODEL,
+        "role": "Team lead: owns the job from request to finished deliverables, routes work to the right specialist, picks the draft, keeps the brief, and asks the user only when blocked.",
+        "username": "Liam",
         "avatar_url": "https://cdn.discordapp.com/attachments/1553326533769302098/1553346556025901187/liam.jpg?ex=6ab8ea36&is=6ab798b6&hm=6998f8a6d251110f2bee4c74bbf3197f22b95affa929a6d9ef6b968264c0bf8b&",
     },
     "scout": {
-        "model": MODEL_GPT_5_NANO,
+        "model": SELECTED_MODEL,
         "role": "Researcher: finds current, sourced facts, trends and audience angles on the web.",
-        "username": "Stark (Scout)",
+        "username": "Stark",
         "avatar_url": "https://cdn.discordapp.com/attachments/1553326533769302098/1553346557661810698/stark.jpg?ex=6ab8ea37&is=6ab798b7&hm=0b10f3a5ef6bbc67110e8c0d4d56138b9104bc018b44aee650db968fd1cbd08d&",
     },
     "content": {
-        "model": MODEL_GPT_5_NANO,
+        "model": SELECTED_MODEL,
         "temperature": 0.7,
         "role": "Copywriter: writes, revises and locks in the post copy.",
-        "username": "Claire (Content)",
+        "username": "Claire",
         "avatar_url": "https://cdn.discordapp.com/attachments/1553326533769302098/1553346555371720774/claire.jpg?ex=6ab8ea36&is=6ab798b6&hm=fba20c1df1bec8cde8a7ed1e8da2666028fe4f5200777882cce553d004e37892&",
     },
     "producer": {
-        "model": MODEL_GPT_5_NANO,
+        "model": SELECTED_MODEL,
         "role": "Video producer: turns the chosen copy into a spoken script and renders the avatar video.",
-        "username": "Paul (Producer)",
+        "username": "Paul",
         "avatar_url": "https://cdn.discordapp.com/attachments/1553326533769302098/1553346556718088222/paul.jpg?ex=6ab8ea36&is=6ab798b6&hm=ec846bc3ba380f703f1c61d43a3471a617bb110109aedf27fd208447a1314061&",
     },
 }

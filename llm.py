@@ -44,7 +44,6 @@ def render_workspace(state: State) -> str:
     if state.get("video_job_id") or state.get("video_script"):
         video = (
             f"script: {state.get('video_script') or '(none)'}\n"
-            f"tier: {state.get('video_tier', 'basic')}\n"
             f"render status: {state.get('video_status') or 'not started'}\n"
             f"video url: {state.get('video_url') or '(none)'}"
         )

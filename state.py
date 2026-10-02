@@ -1,14 +1,11 @@
 """Shared graph state for the multi-agent content team."""
 from __future__ import annotations
-
 import operator
 from typing import Literal, TypedDict
-
 from typing_extensions import Annotated
 
 Persona = Literal["lead", "scout", "content", "producer"]
 Speaker = Literal["user", "lead", "scout", "content", "producer"]
-VideoTier = Literal["basic", "premium"]
 
 
 class SpeakerMessage(TypedDict):
@@ -32,7 +29,6 @@ class State(TypedDict, total=False):
     drafts: list[str]
     chosen_draft: str
     video_script: str
-    video_tier: VideoTier
     video_job_id: str
     video_status: str  # "rendering" | "completed" | "failed" | "timeout"
     video_url: str

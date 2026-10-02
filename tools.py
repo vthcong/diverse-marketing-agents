@@ -17,13 +17,10 @@ from state import State
 load_dotenv()
 
 HEYGEN_BASE = "https://api.heygen.com"
-# HeyGen has no literal "tier" concept -- basic/premium is mapped to output resolution, using the one avatar/voice configured in .env for both.
-HEYGEN_DIMENSIONS = {
-    "basic": {"width": 1280, "height": 720},
-    "premium": {"width": 1920, "height": 1080},
-}
+HEYGEN_RESOLUTION = "720p"  # every video is rendered at 720p
 RENDER_POLL_SECONDS = 10
 RENDER_TIMEOUT_SECONDS = 15 * 60
+MAX_VIDEO_WORDS = 50  # HeyGen has no max-duration setting, so the script length is the only cap; at ~0.5 s per word this is about 25 seconds
 
 _locks: dict[str, asyncio.Lock] = {}
 
@@ -97,27 +94,33 @@ def content_tools(ws: Workspace) -> list[BaseTool]:
     return [save_drafts, choose_draft]
 
 
-async def heygen_start(script: str, tier: str) -> str:
+async def heygen_start(script: str) -> str:
     """Kicks off a render and returns HeyGen's video id straight away; it does not wait for the render."""
     payload = {
-        "video_inputs": [
-            {
-                "character": {"type": "avatar", "avatar_id": os.environ["HEYGEN_AVATAR_ID"], "avatar_style": "normal"},
-                "voice": {"type": "text", "input_text": script, "voice_id": os.environ["HEYGEN_VOICE_ID"]},
-            }
-        ],
-        "dimension": HEYGEN_DIMENSIONS[tier],
+        "type": "avatar",
+        "avatar_id": os.environ["HEYGEN_AVATAR_ID"],
+        "voice_id": os.environ["HEYGEN_VOICE_ID"],
+        "script": script,
+        "resolution": HEYGEN_RESOLUTION,
+        "aspect_ratio": "9:16",
     }
     async with httpx.AsyncClient(timeout=30) as client:
-        resp = await client.post(f"{HEYGEN_BASE}/v2/video/generate", headers={"X-Api-Key": os.environ["HEYGEN_API_KEY"]}, json=payload)
+        resp = await client.post(
+            f"{HEYGEN_BASE}/v3/videos",
+            headers={"x-api-key": os.environ["HEYGEN_API_KEY"]},
+            json=payload
+        )
     resp.raise_for_status()
     return resp.json()["data"]["video_id"]
 
 
 async def heygen_status(video_id: str) -> dict:
-    """Returns HeyGen's status object: {"status": ..., "video_url": ..., "error": ...}."""
+    """Returns HeyGen's video object: status is pending/processing/completed/failed, plus video_url when completed and failure_message when failed."""
     async with httpx.AsyncClient(timeout=30) as client:
-        resp = await client.get(f"{HEYGEN_BASE}/v1/video_status.get", params={"video_id": video_id}, headers={"X-Api-Key": os.environ["HEYGEN_API_KEY"]})
+        resp = await client.get(
+            f"{HEYGEN_BASE}/v3/videos/{video_id}",
+            headers={"x-api-key": os.environ["HEYGEN_API_KEY"]}
+        )
     resp.raise_for_status()
     return resp.json()["data"]
 
@@ -148,17 +151,19 @@ async def _watch_render(thread_id: str, video_id: str) -> None:
             result = {"status": "completed", "video_url": data["video_url"]}
             break
         if data["status"] == "failed":
-            result = {"status": "failed", "error": data["error"]}
+            result = {"status": "failed", "error": data["failure_message"]}
             break
     await _render_handler(thread_id, result)
 
 
 def producer_tools(ws: Workspace) -> list[BaseTool]:
     @tool
-    def set_video_plan(script: str, tier: Literal["basic", "premium"] = "basic") -> str:
-        """Save the spoken script for the video and the quality tier ("basic" = 720p, "premium" = 1080p). Does not start a render."""
-        ws.set(video_script=script, video_tier=tier)
-        return f"Script saved ({len(script.split())} words, {tier} tier)."
+    def set_video_plan(script: str) -> str:
+        """Save the spoken script for the video. Does not start a render."""
+        if (words := len(script.split())) > MAX_VIDEO_WORDS:
+            return f"Not saved: the script is {words} words, over the {MAX_VIDEO_WORDS}-word limit. Shorten it and save it again."
+        ws.set(video_script=script)
+        return f"Script saved ({words} words)."
 
     @tool
     async def start_video_render(replace_existing: bool = False) -> str:
@@ -167,11 +172,10 @@ def producer_tools(ws: Workspace) -> list[BaseTool]:
             return "You wrote this script during this same turn, so the user hasn't seen it yet. Show it to them and wait for their approval first."
         if ws.get("video_status") in ("rendering", "completed") and not replace_existing:
             return f"A render is already {ws.get('video_status')} (job {ws.get('video_job_id')}). Only pass replace_existing=true if the user wants a new one."
-        tier = ws.get("video_tier", "basic")
-        video_id = await heygen_start(ws.get("video_script"), tier)
+        video_id = await heygen_start(ws.get("video_script"))
         ws.set(video_job_id=video_id, video_status="rendering", video_url="")
         _spawn_render_watcher(ws.thread_id, video_id)
-        return f"Render started (job {video_id}, {tier} tier). It takes a few minutes, and the finished link is posted in the channel automatically."
+        return f"Render started (job {video_id}). It takes a few minutes, and the finished link is posted in the channel automatically."
 
     @tool
     async def check_video_status() -> str:
@@ -184,7 +188,7 @@ def producer_tools(ws: Workspace) -> list[BaseTool]:
             return f"Completed: {data['video_url']}"
         if data["status"] == "failed":
             ws.set(video_status="failed")
-            return f"The render failed: {data['error']}"
+            return f"The render failed: {data['failure_message']}"
         return f"Still rendering (HeyGen status: {data['status']})."
 
     return [set_video_plan, start_video_render, check_video_status]
