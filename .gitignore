@@ -4,3 +4,4 @@ __pycache__/
 .DS_Store
 # Conversation history from real chats lives here
 checkpoints.sqlite*
+.claude/settings.local.json
