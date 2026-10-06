@@ -55,11 +55,13 @@ Differences to keep in mind:
   - The point: Claude Code reads `CLAUDE.md` natively but not `AGENTS.md`, which is why the import is needed.
 - [x] **1.4 Nested CLAUDE.md.** Add `personas/CLAUDE.md` with rules for persona prompts, e.g. "refer to teammates by role, never by name".
   - Done when it loads only after Claude reads a file inside `personas/`.
-- [ ] **1.5 Path-scoped rules.** Add `.claude/rules/heygen.md` with `paths: ["tools.py"]` frontmatter, holding your HeyGen v3 notes.
+- [x] **1.5 Path-scoped rules.** Add `.claude/rules/heygen.md` with `paths: ["tools.py"]` frontmatter, holding your HeyGen v3 notes.
   - Done when it loads only when `tools.py` is touched.
-- [ ] **1.6 Personal and auto memory.**
+  - Notes: also added `graph.md`, `llm.md` and `discord.md` in `.claude/rules/`, and trimmed `docs/architecture.md` to point at them. Loading behaviour not yet verified in a fresh session; the 6.5 `InstructionsLoaded` hook will confirm it.
+- [x] **1.6 Personal and auto memory.**
   - Add `CLAUDE.local.md` for personal notes and gitignore it.
   - Ask Claude to "remember" a preference, then open `~/.claude/projects/<this-project>/memory/` and read `MEMORY.md` and the new file.
+  - Notes: `CLAUDE.local.md` holds my learning goals. Read the existing memory files but didn't save a new one in this exercise.
 
 ## Phase 2: Settings, permissions, sandbox
 
