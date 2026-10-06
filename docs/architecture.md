@@ -10,7 +10,7 @@ A LangGraph state machine drives four LLM agents (Lead, Scout, Content, Producer
 - `build_graph(checkpointer)` is sync and takes an already-open `AsyncSqliteSaver`; `discord_bot.main()` opens it with `async with`. Node names must not equal state keys, which is why the copywriter node is `content`.
 
 ## Agents, personas and models
-- Each agent's prompt is `personas/<persona>.md` prefixed by `personas/team.md`, read fresh on every call, so prompt edits apply without a restart. Persona prompts refer to teammates by role, never by name, because the names in `personas.py` are configurable.
+- Each agent's prompt is `personas/<persona>.md` prefixed by `personas/team.md`, read fresh on every call, so prompt edits apply without a restart.
 - `personas.py` is the single per-persona config (`model` plus any `ChatOpenAI` kwarg, `role`, Discord `username` / `avatar_url`). langchain-openai silently drops `temperature` on gpt-5 models.
 - `llm.py`: `run_agent` is a manual tool-calling loop that raises if a persona is still calling tools after `MAX_TOOL_ROUNDS`.
 

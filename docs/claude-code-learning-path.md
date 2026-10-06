@@ -53,7 +53,7 @@ Differences to keep in mind:
   - Done when `/memory` lists the imported file.
 - [x] **1.3 AGENTS.md.** Create `AGENTS.md`, the cross-tool convention used by Codex, Cursor and others, holding the tool-agnostic rules (the error-handling policy). Import it from `CLAUDE.md` with `@AGENTS.md`.
   - The point: Claude Code reads `CLAUDE.md` natively but not `AGENTS.md`, which is why the import is needed.
-- [ ] **1.4 Nested CLAUDE.md.** Add `personas/CLAUDE.md` with rules for persona prompts, e.g. "refer to teammates by role, never by name".
+- [x] **1.4 Nested CLAUDE.md.** Add `personas/CLAUDE.md` with rules for persona prompts, e.g. "refer to teammates by role, never by name".
   - Done when it loads only after Claude reads a file inside `personas/`.
 - [ ] **1.5 Path-scoped rules.** Add `.claude/rules/heygen.md` with `paths: ["tools.py"]` frontmatter, holding your HeyGen v3 notes.
   - Done when it loads only when `tools.py` is touched.
