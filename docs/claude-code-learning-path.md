@@ -51,7 +51,7 @@ Differences to keep in mind:
 - [x] **1.2 Imports.** Move the long *Architecture* section of `CLAUDE.md` into `docs/architecture.md`, then import it with `@docs/architecture.md`.
   - Then prune what's left: for each line ask "would removing this make Claude make mistakes?" `/doctor` proposes cuts for anything Claude can work out from the code.
   - Done when `/memory` lists the imported file.
-- [ ] **1.3 AGENTS.md.** Create `AGENTS.md`, the cross-tool convention used by Codex, Cursor and others, holding the tool-agnostic rules (the error-handling policy). Import it from `CLAUDE.md` with `@AGENTS.md`.
+- [x] **1.3 AGENTS.md.** Create `AGENTS.md`, the cross-tool convention used by Codex, Cursor and others, holding the tool-agnostic rules (the error-handling policy). Import it from `CLAUDE.md` with `@AGENTS.md`.
   - The point: Claude Code reads `CLAUDE.md` natively but not `AGENTS.md`, which is why the import is needed.
 - [ ] **1.4 Nested CLAUDE.md.** Add `skills/CLAUDE.md` with rules for persona prompts, e.g. "refer to teammates by role, never by name".
   - Done when it loads only after Claude reads a file inside `skills/`.
