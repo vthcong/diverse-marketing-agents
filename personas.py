@@ -48,14 +48,14 @@ def llm_kwargs(persona: Persona) -> dict:
     return {k: v for k, v in PERSONAS[persona].items() if k not in _NON_LLM_KEYS}
 
 
-SKILLS_DIR = Path(__file__).parent / "skills"
+PERSONAS_DIR = Path(__file__).parent / "personas"
 
 
-def load_skill(persona: Persona) -> str:
-    """Reads skills/<persona>.md fresh on every call (no caching), so editing a skill file takes effect on the next message without restarting the bot."""
-    return (SKILLS_DIR / f"{persona}.md").read_text().strip()
+def load_persona(persona: Persona) -> str:
+    """Reads personas/<persona>.md fresh on every call (no caching), so editing a persona file takes effect on the next message without restarting the bot."""
+    return (PERSONAS_DIR / f"{persona}.md").read_text().strip()
 
 
 def load_team() -> str:
-    """The shared team charter (skills/team.md), prepended to every persona's system prompt. Also read fresh on every call."""
-    return (SKILLS_DIR / "team.md").read_text().strip()
+    """The shared team charter (personas/team.md), prepended to every persona's system prompt. Also read fresh on every call."""
+    return (PERSONAS_DIR / "team.md").read_text().strip()

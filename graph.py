@@ -3,7 +3,7 @@
     START -> lead --(next_agent)--> scout | content | producer | END
     scout, content and producer each hand back to lead when they finish.
 
-Every agent is an LLM with its own model, skill prompt (skills/<persona>.md) and tools. One user message is one turn: lead routes, a specialist works and replies (its message is streamed to Discord as soon as the node finishes), lead hands off again or wraps up, and the turn ends at END. There is no interrupt(): the thread is persisted by the checkpointer, so the user's next message just starts the next turn with everything still in state. That is what lets the user talk to any agent at any time, not only at fixed approval points.
+Every agent is an LLM with its own model, persona prompt (personas/<persona>.md) and tools. One user message is one turn: lead routes, a specialist works and replies (its message is streamed to Discord as soon as the node finishes), lead hands off again or wraps up, and the turn ends at END. There is no interrupt(): the thread is persisted by the checkpointer, so the user's next message just starts the next turn with everything still in state. That is what lets the user talk to any agent at any time, not only at fixed approval points.
 """
 from typing import Literal
 

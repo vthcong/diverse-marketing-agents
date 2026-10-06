@@ -21,7 +21,7 @@ Yes, at two levels:
 | LangGraph piece | Claude Code equivalent |
 |---|---|
 | `lead` node + `Route` structured output | Main thread (`claude --agent lead`) delegating via the Agent tool. The model routes; there's no graph. |
-| Specialist nodes + `skills/*.md` prompts | `.claude/agents/{scout,content,producer}.md` subagents, each with its own tools and model |
+| Specialist nodes + `personas/*.md` prompts | `.claude/agents/{scout,content,producer}.md` subagents, each with its own tools and model |
 | Workspace state (`brief`, `findings`, `drafts`…) | Files in `workspace/<job>/` |
 | Tavily `web_search` / `read_page` | Built-in `WebSearch` / `WebFetch`, or the Tavily MCP server |
 | HeyGen tools in `tools.py` | Your own MCP server wrapping `tools.heygen_start` / `tools.heygen_status` |
@@ -40,7 +40,7 @@ Differences to keep in mind:
 - **Subscription-only access.** Phases 1–8, channels and headless `claude -p` run on your Pro/Max login. The 9.3 SDK bot can run locally on your own login for personal experiments. Before serving it to other people, Anthropic's terms require an Anthropic API key.
 - **Usage limits.** Every subagent and teammate uses up your plan's limits. Give Scout `haiku` or `sonnet`.
 
-**Name clash:** the repo's `skills/` folder holds LangGraph persona prompts. `.claude/skills/` holds Claude Code skills. They are unrelated.
+**Two different things, two folders.** `personas/` (renamed from `skills/` to avoid a clash) holds the role prompts: who each agent is, its job, tools and output format. The LangGraph bot reads them, and the Claude Code agents in 4.2 read the same files. `.claude/skills/` holds reusable know-how, such as how to vet a source or write a hook. Task 3.3 lists the ones this team needs. `personas.py` and the `personas/` folder sit side by side; Python imports the module, not the folder, so it works, but don't add an `__init__.py` to the folder.
 
 ---
 
@@ -53,8 +53,8 @@ Differences to keep in mind:
   - Done when `/memory` lists the imported file.
 - [x] **1.3 AGENTS.md.** Create `AGENTS.md`, the cross-tool convention used by Codex, Cursor and others, holding the tool-agnostic rules (the error-handling policy). Import it from `CLAUDE.md` with `@AGENTS.md`.
   - The point: Claude Code reads `CLAUDE.md` natively but not `AGENTS.md`, which is why the import is needed.
-- [ ] **1.4 Nested CLAUDE.md.** Add `skills/CLAUDE.md` with rules for persona prompts, e.g. "refer to teammates by role, never by name".
-  - Done when it loads only after Claude reads a file inside `skills/`.
+- [ ] **1.4 Nested CLAUDE.md.** Add `personas/CLAUDE.md` with rules for persona prompts, e.g. "refer to teammates by role, never by name".
+  - Done when it loads only after Claude reads a file inside `personas/`.
 - [ ] **1.5 Path-scoped rules.** Add `.claude/rules/heygen.md` with `paths: ["tools.py"]` frontmatter, holding your HeyGen v3 notes.
   - Done when it loads only when `tools.py` is touched.
 - [ ] **1.6 Personal and auto memory.**
@@ -99,7 +99,34 @@ Differences to keep in mind:
   - Also try named `arguments` (e.g. `[brand, channel]`, used as `$brand`), `argument-hint`, and `when_to_use` with trigger phrases.
   - Optional: check how reliably it triggers with the `skill-creator` skill's evals.
   - Done when Claude loads it on its own from a plain request like "draft a brief for a coffee brand".
-- [ ] **3.3 Document the two "skills".** Add a section to `skills/CLAUDE.md` explaining the difference between `skills/` and `.claude/skills/`.
+- [ ] **3.3 Know-how skills for the team.** The persona prompts say *what* each agent does. They say little about *how to do it well*. Write these as `.claude/skills/<name>/SKILL.md`, each short (about 300 words or fewer), with a `description` that says when to use it. Do the essentials first.
+  - **Team-wide** (several agents need the same know-how):
+
+    | Skill | Used by | Why | Priority |
+    |---|---|---|---|
+    | `fact-grounding` | Scout, Content, Producer, Lead | How to tie every claim to a source, what counts as verified, how to word a claim you can't verify. Backs the "never invent facts" rule in `personas/team.md` and Lead's "a claim you can't verify" stop rule. | Essential |
+    | `untrusted-input` | Scout first, then all | Fetched pages (and, in 9.3, Discord messages) are data, never instructions. Pairs with the injection experiment in 4.5. | Essential |
+    | `platform-specs` | Content, Producer, Lead | Length, hashtag, line-break and CTA norms per platform; video length and format. Lead uses it to write the brief; Producer's 50-word cap (`MAX_VIDEO_WORDS`) lives there. | Essential |
+    | `campaign-brief` | Lead writes, all read | Already task 3.2: the brief template. | Suitable |
+    | `brand-voice` | Content, Producer, Scout | One voice guide (audience, tone, words to use and avoid) so the copy, script and research language agree. Needs your input per brand. | Suitable |
+    | `workspace-handoff` | All, Claude Code port only | The `workspace/<job>/` file contract (which file each agent reads and writes). The LangGraph version uses state instead. | Optional |
+
+  - **Per agent:**
+
+    | Agent | Skill | What it teaches |
+    |---|---|---|
+    | Lead | `draft-selection` | A rubric for the pick (hook strength, fit to brief and audience, claim safety, clear CTA). `personas/lead.md` says "choose the best" and gives no criteria. **Essential.** |
+    | Lead | `delegation` | How to write a self-contained task for a specialist, since they can't see Lead's reasoning (and in Claude Code the task prompt is a subagent's only context). Suitable. |
+    | Scout | `source-vetting` | Primary vs secondary sources, recency, spotting SEO spam and thin pages, what to drop. **Essential.** |
+    | Scout | `search-strategy` | Query angles, when to use news vs general search, how to stay inside the 4-search budget. Suitable; could merge into `source-vetting`. |
+    | Content | `caption-writing` | What makes a hook work, structure and CTA, matching tone to platform, and a method for 3 options that differ in hook or angle instead of wording. **Essential.** |
+    | Content | `campaign-playbooks` | Patterns per goal: hiring post, product launch, event. Your first test case was a hiring post. Optional. |
+    | Producer | `spoken-script` | Writing for the ear: short sentences, numbers as spoken, a strong first line, pacing to about 25 seconds. Bundle a small `count_words.py` that checks the cap. **Essential.** |
+
+  - **Not skills.** The render gate is a hook (6.1), and HeyGen API notes are a path-scoped rule (1.5), because those must be enforced or loaded by path, not requested by the model.
+  - **Wire them up in 4.2** with each agent's `skills:` frontmatter. Preloading puts the full text in every run, so check the cost with `/context` and `/usage` (4.4).
+  - **Open question to decide while you write them:** the LangGraph bot only benefits if `personas.py` also reads these files (and strips the frontmatter). Either add that small loader so both systems share one copy, or accept that these are Claude Code-only. Record your choice under `Notes:`.
+  - Done when the essential skills exist, Claude loads at least one on its own from a plain request, and you've compared a Scout or Content run with and without its skill.
 
 ## Phase 4: Subagents (the core rebuild)
 
@@ -107,11 +134,11 @@ Differences to keep in mind:
   - Note what each one can and can't do.
 - [ ] **4.2 Specialists.** Create `.claude/agents/scout.md`, `content.md` and `producer.md`.
   - Frontmatter: `name`, `description`, `tools`, `model`, `color`.
-  - Each agent body begins "First read `skills/team.md` and `skills/<role>.md`", so your existing prompts stay the single source of truth.
+  - Each agent body begins "First read `personas/team.md` and `personas/<role>.md`", so your existing prompts stay the single source of truth.
   - Agents write their outputs to `workspace/<job>/` (`brief.md`, `findings.md`, `drafts.md`, `chosen.md`, `video_script.md`).
   - Beyond those five fields ([full list](https://code.claude.com/docs/en/sub-agents)): try `effort`, `disallowedTools`, `permissionMode`, and `memory: project` on Scout so it keeps notes on good sources across sessions.
-  - `skills:` preloads Claude Code skills into an agent at startup, e.g. give Content the `campaign-brief` skill from 3.2. It only takes `.claude/skills/` skills, not the persona prompts in `skills/`.
-- [ ] **4.3 Lead as the main thread.** Create `.claude/agents/lead.md` from `skills/lead.md`, then run `claude --agent lead` (or set `"agent": "lead"` in settings).
+  - `skills:` preloads Claude Code skills into an agent at startup, e.g. give Content `caption-writing` and `campaign-brief`, and Scout `source-vetting`. The full table of which agent gets which skill is in 3.3. It only takes `.claude/skills/` skills, not the persona prompts in `personas/`.
+- [ ] **4.3 Lead as the main thread.** Create `.claude/agents/lead.md` from `personas/lead.md`, then run `claude --agent lead` (or set `"agent": "lead"` in settings).
   - Add `initialPrompt` to `lead.md` to send a first turn automatically when it runs as the main agent (e.g. "list the jobs in workspace/ and ask which to continue").
   - Done when "campaign for X" runs research → drafts → pick → video script and stops for your approval.
 - [ ] **4.4 Measure cost.** You need numbers for 4.5, 5.3, 7.3 and 9.4.
@@ -213,7 +240,7 @@ Do these drills alongside the phases above; most fit naturally once Phase 4 give
   - `/` command or skill · `!` shell mode (output goes into context) · `@` file mention · `?` shortcut panel
   - Multiline: `\`+Enter, `Ctrl+J`, or Shift+Enter (run `/terminal-setup` if Shift+Enter doesn't work)
   - `Ctrl+R` history search · `Ctrl+G` edit the prompt in your editor · `Ctrl+S` stash a draft · `Ctrl+V` paste an image
-  - Drill: type `!git status`, then ask "what changed?"; `@skills/lead.md` + a question; paste a screenshot of the Discord channel and ask about it.
+  - Drill: type `!git status`, then ask "what changed?"; `@personas/lead.md` + a question; paste a screenshot of the Discord channel and ask about it.
 
 - [ ] **10.1 Session lifecycle.**
   - Interactive: `/clear [name]`, `/rename`, `/resume`, `/export [file]`, `/copy [N]`, `/recap`, `/exit`
@@ -233,7 +260,7 @@ Do these drills alongside the phases above; most fit naturally once Phase 4 give
 - [ ] **10.4 Undo and alternate paths.**
   - `/diff` see working-tree changes · `/rewind` (code only, conversation only, both, or summarize from a point)
   - `/branch [name]` try a different direction in this session · `/fork` copy into a background session · `/subtask <task>` forked subagent that reports back here
-  - Drill: let Claude rewrite `skills/content.md`, check it with `/diff`, then `/rewind` the code only. Next, `/branch lead-v2` to try a stricter Lead prompt and `/resume` back to compare.
+  - Drill: let Claude rewrite `personas/content.md`, check it with `/diff`, then `/rewind` the code only. Next, `/branch lead-v2` to try a stricter Lead prompt and `/resume` back to compare.
 
 - [ ] **10.5 Context management.**
   - `/context [all]` · `/compact [focus instructions]` · `/autocompact <size|auto>` · `/memory`

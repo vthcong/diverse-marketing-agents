@@ -4,13 +4,13 @@ A LangGraph state machine drives four LLM agents (Lead, Scout, Content, Producer
 
 ## Turn model (`graph.py`)
 - `START -> lead --(state["next_agent"])--> scout | content | producer | END`, and each specialist edges back to `lead`. One user message is one turn.
-- Lead drives a job through the pipeline on its own (research, drafts, pick, video script) and stops only under the stop rules in `skills/lead.md`. The user's only mandatory gate is approving the video script and render, which `start_video_render` also enforces in code. A full run is about 9 steps, so keep `RECURSION_LIMIT` above that if the pipeline grows.
+- Lead drives a job through the pipeline on its own (research, drafts, pick, video script) and stops only under the stop rules in `personas/lead.md`. The user's only mandatory gate is approving the video script and render, which `start_video_render` also enforces in code. A full run is about 9 steps, so keep `RECURSION_LIMIT` above that if the pipeline grows.
 - There is no `interrupt()`. The thread is persisted by `AsyncSqliteSaver` (`checkpoints.sqlite`), so the user's next message starts the next turn with everything still in state. That is what lets the user address any agent at any time.
 - `lead` uses `with_structured_output(Route)`. `new_job=True` clears `drafts`, `chosen_draft` and the video fields but keeps research. A lead/specialist ping-pong is cut off in code: if lead routes to a specialist who has already replied `MAX_REPLIES_PER_TURN` (2) times since the user's latest message, `lead()` forces `finish` and drops its own message. `RECURSION_LIMIT` is the last-resort backstop.
 - `build_graph(checkpointer)` is sync and takes an already-open `AsyncSqliteSaver`; `discord_bot.main()` opens it with `async with`. Node names must not equal state keys, which is why the copywriter node is `content`.
 
-## Agents, skills and models
-- Each agent's prompt is `skills/<persona>.md` prefixed by `skills/team.md`, read fresh on every call, so prompt edits apply without a restart. Skills refer to teammates by role, never by name, because the names in `personas.py` are configurable.
+## Agents, personas and models
+- Each agent's prompt is `personas/<persona>.md` prefixed by `personas/team.md`, read fresh on every call, so prompt edits apply without a restart. Persona prompts refer to teammates by role, never by name, because the names in `personas.py` are configurable.
 - `personas.py` is the single per-persona config (`model` plus any `ChatOpenAI` kwarg, `role`, Discord `username` / `avatar_url`). langchain-openai silently drops `temperature` on gpt-5 models.
 - `llm.py`: `run_agent` is a manual tool-calling loop that raises if a persona is still calling tools after `MAX_TOOL_ROUNDS`.
 

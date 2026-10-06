@@ -6,7 +6,7 @@ from langchain_core.messages import HumanMessage, SystemMessage, ToolMessage
 from langchain_core.tools import BaseTool
 from langchain_openai import ChatOpenAI
 
-from personas import PERSONAS, llm_kwargs, load_skill, load_team
+from personas import PERSONAS, llm_kwargs, load_persona, load_team
 from state import Persona, State
 
 MAX_TOOL_ROUNDS = 15
@@ -19,7 +19,7 @@ LLMS: dict[Persona, ChatOpenAI] = {persona: ChatOpenAI(**llm_kwargs(persona)) fo
 
 
 def system_prompt(persona: Persona) -> SystemMessage:
-    return SystemMessage(f"{load_team()}\n\n{load_skill(persona)}")
+    return SystemMessage(f"{load_team()}\n\n{load_persona(persona)}")
 
 
 def roster() -> str:
