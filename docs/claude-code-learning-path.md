@@ -65,12 +65,13 @@ Differences to keep in mind:
 
 ## Phase 2: Settings, permissions, sandbox
 
-- [ ] **2.1 Project settings.** Create `.claude/settings.json` with these rules:
+- [x] **2.1 Project settings.** Create `.claude/settings.json` with these rules:
   - allow `Bash(/opt/miniconda3/envs/langchain/bin/python *)`
   - deny `Read(./.env)` and `Read(./checkpoints.sqlite*)`
   - ask for `Bash(git push *)`
 
   Done when asking Claude to read `.env` is refused.
+  - Notes: Read tool refused `.env`. Also set `ask` on `git add` and `git commit`. `Read(...)` deny rules don't cover Bash (`cat .env`), so the sandbox in 2.4 is the real fix.
 - [ ] **2.2 Scopes.** Put a personal override in `.claude/settings.local.json`.
   - Use `/status` and `/permissions` to confirm the precedence order: managed > CLI flags > local > project > user.
 - [ ] **2.3 Permission modes.** Cycle through Manual (config value `default`), acceptEdits, plan and auto with Shift+Tab.

@@ -1,8 +1,17 @@
 {
   "permissions": {
+    "allow": [
+      "Bash(/opt/miniconda3/envs/langchain/bin/python *)"
+    ],
     "deny": [
       "Read(./.env)",
-      "Read(./.env.*)"
+      "Read(./.env.*)",
+      "Read(./checkpoints.sqlite*)"
+    ],
+    "ask": [
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)"
     ]
   }
 }
