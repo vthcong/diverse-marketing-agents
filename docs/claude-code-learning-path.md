@@ -72,8 +72,9 @@ Differences to keep in mind:
 
   Done when asking Claude to read `.env` is refused.
   - Notes: Read tool refused `.env`. Also set `ask` on `git add` and `git commit`. `Read(...)` deny rules don't cover Bash (`cat .env`), so the sandbox in 2.4 is the real fix.
-- [ ] **2.2 Scopes.** Put a personal override in `.claude/settings.local.json`.
+- [x] **2.2 Scopes.** Put a personal override in `.claude/settings.local.json`.
   - Use `/status` and `/permissions` to confirm the precedence order: managed > CLI flags > local > project > user.
+  - Notes: `.claude/settings.local.json` holds `model`, `effortLevel`, a Notion deny and `skillOverrides`. The effort key is `effortLevel`, not `effort`; a wrong key is ignored silently, even by `/doctor`.
 - [ ] **2.3 Permission modes.** Cycle through Manual (config value `default`), acceptEdits, plan and auto with Shift+Tab.
   - From v2.1.283, auto is the starting mode: a classifier model reviews actions instead of you. Check yours with `claude --version`.
   - `dontAsk` never appears in the cycle; set it with `--permission-mode dontAsk`. It runs only pre-approved tools and denies everything else, which suits scripts and the Phase 9 bot.

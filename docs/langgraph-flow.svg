@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 700" width="1000" height="700" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#1f2937"/>
+    </marker>
+    <marker id="arrowBack" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#6b7280"/>
+    </marker>
+  </defs>
+
+  <rect width="1000" height="700" fill="#ffffff"/>
+
+  <text x="500" y="44" text-anchor="middle" font-size="22" font-weight="700" fill="#111827">How the LangGraph team fits together</text>
+  <text x="500" y="68" text-anchor="middle" font-size="13" fill="#6b7280">One user message = one turn through this graph (graph.py)</text>
+
+  <!-- START / END -->
+  <ellipse cx="110" cy="150" rx="50" ry="26" fill="#f3f4f6" stroke="#6b7280" stroke-width="1.5"/>
+  <text x="110" y="155" text-anchor="middle" font-size="14" font-weight="600" fill="#374151">START</text>
+  <ellipse cx="890" cy="150" rx="50" ry="26" fill="#f3f4f6" stroke="#6b7280" stroke-width="1.5"/>
+  <text x="890" y="155" text-anchor="middle" font-size="14" font-weight="600" fill="#374151">END</text>
+
+  <!-- Lead -->
+  <rect x="400" y="110" width="200" height="80" rx="12" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="500" y="142" text-anchor="middle" font-size="18" font-weight="700" fill="#1e3a8a">Lead</text>
+  <text x="500" y="162" text-anchor="middle" font-size="12" fill="#1e40af">router: structured output → Route</text>
+  <text x="500" y="178" text-anchor="middle" font-size="11" fill="#1e40af">next · task · brief · new_job · message</text>
+
+  <!-- START -> lead, lead -> END -->
+  <line x1="160" y1="150" x2="398" y2="150" stroke="#1f2937" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="602" y1="150" x2="838" y2="150" stroke="#1f2937" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="720" y="140" text-anchor="middle" font-size="13" fill="#111827" stroke="#ffffff" stroke-width="4" paint-order="stroke">finish</text>
+  <text x="720" y="172" text-anchor="middle" font-size="11" fill="#6b7280">wait for the user's next message</text>
+
+  <!-- lead -> specialists (conditional, solid) -->
+  <path d="M415 190 C415 290 170 290 170 378" fill="none" stroke="#1f2937" stroke-width="2" marker-end="url(#arrow)"/>
+  <path d="M480 190 L480 378" fill="none" stroke="#1f2937" stroke-width="2" marker-end="url(#arrow)"/>
+  <path d="M585 190 C585 290 830 290 830 378" fill="none" stroke="#1f2937" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="278" y="280" text-anchor="end" font-size="13" fill="#111827" stroke="#ffffff" stroke-width="4" paint-order="stroke">scout</text>
+  <text x="470" y="350" text-anchor="end" font-size="13" fill="#111827" stroke="#ffffff" stroke-width="4" paint-order="stroke">content</text>
+  <text x="722" y="280" text-anchor="start" font-size="13" fill="#111827" stroke="#ffffff" stroke-width="4" paint-order="stroke">producer</text>
+
+  <!-- specialists -> lead (fixed edges, dashed) -->
+  <path d="M230 378 C230 320 445 320 445 192" fill="none" stroke="#6b7280" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#arrowBack)"/>
+  <path d="M520 378 L520 192" fill="none" stroke="#6b7280" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#arrowBack)"/>
+  <path d="M770 378 C770 320 555 320 555 192" fill="none" stroke="#6b7280" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#arrowBack)"/>
+
+  <!-- Scout -->
+  <rect x="80" y="380" width="180" height="80" rx="12" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="170" y="412" text-anchor="middle" font-size="18" font-weight="700" fill="#14532d">Scout</text>
+  <text x="170" y="432" text-anchor="middle" font-size="12" fill="#166534">researcher</text>
+  <text x="170" y="448" text-anchor="middle" font-size="11" fill="#166534">LLM + tools loop</text>
+
+  <!-- Content -->
+  <rect x="410" y="380" width="180" height="80" rx="12" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text x="500" y="412" text-anchor="middle" font-size="18" font-weight="700" fill="#78350f">Content</text>
+  <text x="500" y="432" text-anchor="middle" font-size="12" fill="#92400e">writer</text>
+  <text x="500" y="448" text-anchor="middle" font-size="11" fill="#92400e">LLM + tools loop</text>
+
+  <!-- Producer -->
+  <rect x="680" y="380" width="180" height="80" rx="12" fill="#fce7f3" stroke="#db2777" stroke-width="2"/>
+  <text x="770" y="412" text-anchor="middle" font-size="18" font-weight="700" fill="#831843">Producer</text>
+  <text x="770" y="432" text-anchor="middle" font-size="12" fill="#9d174d">video</text>
+  <text x="770" y="448" text-anchor="middle" font-size="11" fill="#9d174d">LLM + tools loop</text>
+
+  <!-- tool notes -->
+  <rect x="80" y="485" width="180" height="62" rx="8" fill="#ffffff" stroke="#9ca3af" stroke-width="1.2" stroke-dasharray="3 3"/>
+  <text x="170" y="509" text-anchor="middle" font-size="12" fill="#374151">Tavily search + extract</text>
+  <text x="170" y="527" text-anchor="middle" font-size="11" fill="#6b7280">writes findings</text>
+
+  <rect x="410" y="485" width="180" height="62" rx="8" fill="#ffffff" stroke="#9ca3af" stroke-width="1.2" stroke-dasharray="3 3"/>
+  <text x="500" y="509" text-anchor="middle" font-size="12" fill="#374151">drafts, pick, video script</text>
+  <text x="500" y="527" text-anchor="middle" font-size="11" fill="#6b7280">written to the workspace</text>
+
+  <rect x="680" y="485" width="180" height="62" rx="8" fill="#ffffff" stroke="#9ca3af" stroke-width="1.2" stroke-dasharray="3 3"/>
+  <text x="770" y="509" text-anchor="middle" font-size="12" fill="#374151">HeyGen render</text>
+  <text x="770" y="527" text-anchor="middle" font-size="11" fill="#6b7280">needs user approval of script</text>
+  <line x1="170" y1="460" x2="170" y2="485" stroke="#9ca3af" stroke-width="1.2"/>
+  <line x1="500" y1="460" x2="500" y2="485" stroke="#9ca3af" stroke-width="1.2"/>
+  <line x1="770" y1="460" x2="770" y2="485" stroke="#9ca3af" stroke-width="1.2"/>
+
+  <!-- legend -->
+  <line x1="80" y1="600" x2="130" y2="600" stroke="#1f2937" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="142" y="604" font-size="12" fill="#374151">conditional edge: Lead picks who acts next (route_from_lead)</text>
+  <line x1="80" y1="626" x2="130" y2="626" stroke="#6b7280" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#arrowBack)"/>
+  <text x="142" y="630" font-size="12" fill="#374151">fixed edge: every specialist hands back to Lead when it finishes</text>
+  <text x="80" y="660" font-size="12" fill="#6b7280">Guard: if a specialist has already replied twice this turn, Lead is forced to finish.</text>
+  <text x="80" y="680" font-size="12" fill="#6b7280">State is saved by AsyncSqliteSaver, so the user's next message resumes the same thread.</text>
+</svg>
