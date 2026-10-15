@@ -29,6 +29,7 @@ from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
 
 import discord_bot
 import graph
+import heygen
 import llm
 import tools
 
@@ -189,7 +190,7 @@ async def main() -> None:
             assert state["drafts"] == ["Draft A", "Draft B", "Draft C"], f"unexpected drafts: {state['drafts']}"
             assert state["chosen_draft"] == "Draft B", f"unexpected chosen draft: {state['chosen_draft']}"
             assert state["video_script"] == VIDEO_SCRIPT, "producer did not save the script"
-            assert len(state["video_script"].split()) <= tools.MAX_VIDEO_WORDS, "script is over the word cap"
+            assert len(state["video_script"].split()) <= heygen.MAX_VIDEO_WORDS, "script is over the word cap"
             assert not started, "a render started in the same turn the script was written: the approval gate is broken"
 
             await discord_bot.handle_turn(channel, "Dana: Approved, render it.")

@@ -1,11 +1,13 @@
 ---
 paths:
   - "tools.py"
+  - "heygen.py"
+  - "mcp_servers/heygen_server.py"
 ---
 
 # HeyGen v3 notes
 
-`tools.py` calls HeyGen's v3 API (`POST /v3/videos`, `GET /v3/videos/{id}`). v1/v2 retire 2026-10-31, so don't reintroduce them.
+`heygen.py` (shared by the Discord bot's `tools.py` and `mcp_servers/heygen_server.py`) calls HeyGen's v3 API (`POST /v3/videos`, `GET /v3/videos/{id}`). v1/v2 retire 2026-10-31, so don't reintroduce them.
 
 - Written from HeyGen's docs and not yet run against a real account. Treat field names and response shapes (`data.video_id`, `data.status`, `video_url`, `failure_message`) as unverified until a real render succeeds.
 - `HEYGEN_AVATAR_ID` must be an avatar *look* id from `GET /v3/avatars/looks`, not an avatar group id. `HEYGEN_VOICE_ID` must be a `voice_id` from `GET /v3/voices`.

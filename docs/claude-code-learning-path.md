@@ -169,10 +169,11 @@ Differences to keep in mind:
 
 ## Phase 5: MCP
 
-- [ ] **5.1 HeyGen MCP server.** Write `mcp_servers/heygen_server.py`, a FastMCP stdio server exposing `set_video_plan`, `start_video_render` and `check_video_status`.
+- [x] **5.1 HeyGen MCP server.** Write `mcp_servers/heygen_server.py`, a FastMCP stdio server exposing `set_video_plan`, `start_video_render` and `check_video_status`.
   - Reuse `tools.heygen_start`, `tools.heygen_status` and `MAX_VIDEO_WORDS`.
   - Register it at project scope (`.mcp.json`) with `claude mcp add --scope project`.
   - Inspect it with `/mcp`.
+  - Notes: `mcp_servers/heygen_server.py` keeps state in `workspace/<job>/video_script.md` and `render.json`, and rejects job names that aren't a plain folder name. It imports a new shared `heygen.py` (API calls, `MAX_VIDEO_WORDS`, refusal and status messages), as does `tools.py`, so the two never import each other. `.mcp.json` was written by hand because `claude mcp add` couldn't write its temp file inside the sandbox; project-scoped servers need a one-time approval in an interactive `claude` session. Tested over real MCP stdio with HeyGen faked, plus `/smoke-test`. FastMCP reads `.env` in the working directory itself, so inside the sandbox the server can't start and `claude mcp list` shows `CONNECTION_CLOSED`; that is a sandbox effect, not a server bug. HeyGen's real API is still unverified. The gate is not here: it comes with 5.2 (`ask` rule) and 6.1 (approval hook).
 - [ ] **5.2 Scope it.** Make the server reachable only by the producer subagent (agent `tools` / `mcpServers`).
   - Then define the server inline under `mcpServers` in `producer.md` instead of `.mcp.json`, so the main thread never sees it. Compare the two.
   - Put `mcp__heygen__start_video_render` in `permissions.ask`.

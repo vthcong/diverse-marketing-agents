@@ -30,5 +30,5 @@ Checked 2026-10-15. Every figure below comes from third-party guides and tool si
 - Sources: wordcountertool.net/character-limits/tiktok, howmanywords.app/blog/tiktok-character-limits.
 
 ## Video (HeyGen avatar)
-- 50 words is the cap in this repo (`MAX_VIDEO_WORDS` in `tools.py`). HeyGen has no maximum-duration setting, so word count is the only limit. About 0.5 seconds per word gives about 25 seconds.
+- 50 words is the cap in this repo (`MAX_VIDEO_WORDS` in `heygen.py`). HeyGen has no maximum-duration setting, so word count is the only limit. About 0.5 seconds per word gives about 25 seconds.
 - Every video renders at 720p.

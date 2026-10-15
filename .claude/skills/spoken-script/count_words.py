@@ -3,8 +3,8 @@ import re
 import sys
 from pathlib import Path
 
-# Read the cap from tools.py so there is one source of truth; importing tools would pull in langchain and needs API keys
-MAX_VIDEO_WORDS = int(re.search(r"^MAX_VIDEO_WORDS = (\d+)", (Path(__file__).resolve().parents[3] / "tools.py").read_text(), re.M).group(1))
+# Read the cap from heygen.py so there is one source of truth; importing it would pull in httpx and python-dotenv, which the system python may not have
+MAX_VIDEO_WORDS = int(re.search(r"^MAX_VIDEO_WORDS = (\d+)", (Path(__file__).resolve().parents[3] / "heygen.py").read_text(), re.M).group(1))
 SECONDS_PER_WORD = 0.5
 
 # What an avatar can't speak: pattern -> label

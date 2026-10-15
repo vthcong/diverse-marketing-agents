@@ -24,6 +24,6 @@ The sources, the exact conflicting figures and what is still unchecked are in `r
 - Check the format in the brief: feed post, Reel, Story, carousel or video.
 
 ## Video (HeyGen avatar)
-- **50 words maximum** (`MAX_VIDEO_WORDS` in `tools.py`, about 25 seconds at half a second a word). The tool rejects longer scripts.
+- **50 words maximum** (`MAX_VIDEO_WORDS` in `heygen.py`, about 25 seconds at half a second a word). The tool rejects longer scripts.
 - 720p only.
 - Spoken text only: no hashtags, emoji, URLs or markdown. See `spoken-script`.
