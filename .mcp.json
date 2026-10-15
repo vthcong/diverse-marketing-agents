@@ -1,12 +1,3 @@
 {
-  "mcpServers": {
-    "heygen": {
-      "type": "stdio",
-      "command": "/opt/miniconda3/envs/langchain/bin/python",
-      "args": [
-        "mcp_servers/heygen_server.py"
-      ],
-      "env": {}
-    }
-  }
+  "mcpServers": {}
 }

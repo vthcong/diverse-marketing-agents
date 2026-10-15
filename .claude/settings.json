@@ -15,7 +15,8 @@
     "ask": [
       "Bash(git add *)",
       "Bash(git commit *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "mcp__heygen__start_video_render"
     ]
   },
   "statusLine": {
