@@ -1,5 +1,9 @@
 {
+  "env": {
+    "PYTHONUNBUFFERED": "1"
+  },
   "permissions": {
+    "defaultMode": "auto",
     "allow": [
       "Bash(/opt/miniconda3/envs/langchain/bin/python *)"
     ],
@@ -13,5 +17,17 @@
       "Bash(git commit *)",
       "Bash(git push *)"
     ]
+  },
+  "sandbox": {
+    "network": {
+      "allowedDomains": [
+        "api.openai.com",
+        "api.tavily.com",
+        "api.heygen.com",
+        "discord.com",
+        "*.discord.gg",
+        "api.anthropic.com"
+      ]
+    }
   }
 }

@@ -1,0 +1,14 @@
+#!/bin/bash
+# Claude Code pipes a JSON blob about the session to stdin; whatever this script prints becomes the status line.
+input=$(cat)
+
+model=$(echo "$input" | jq -r '.model.display_name // "?"')
+dir=$(echo "$input" | jq -r '.workspace.current_dir // .cwd // "."')
+used=$(echo "$input" | jq -r '.context_window.used_percentage // empty')
+
+branch=$(git -C "$dir" branch --show-current 2>/dev/null)
+
+line="$model"
+[ -n "$branch" ] && line="$line | $branch"
+[ -n "$used" ] && line="$line | ctx $(printf '%.0f' "$used")%"
+echo "$line"

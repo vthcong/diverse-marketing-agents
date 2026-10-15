@@ -75,17 +75,18 @@ Differences to keep in mind:
 - [x] **2.2 Scopes.** Put a personal override in `.claude/settings.local.json`.
   - Use `/status` and `/permissions` to confirm the precedence order: managed > CLI flags > local > project > user.
   - Notes: `.claude/settings.local.json` holds `model`, `effortLevel`, a Notion deny and `skillOverrides`. The effort key is `effortLevel`, not `effort`; a wrong key is ignored silently, even by `/doctor`.
-- [ ] **2.3 Permission modes.** Cycle through Manual (config value `default`), acceptEdits, plan and auto with Shift+Tab.
+- [x] **2.3 Permission modes.** Cycle through Manual (config value `default`), acceptEdits, plan and auto with Shift+Tab.
   - From v2.1.283, auto is the starting mode: a classifier model reviews actions instead of you. Check yours with `claude --version`.
   - `dontAsk` never appears in the cycle; set it with `--permission-mode dontAsk`. It runs only pre-approved tools and denies everything else, which suits scripts and the Phase 9 bot.
   - Deny rules apply in every mode, even `bypassPermissions`.
   - Set `permissions.defaultMode`.
   - Write down when `bypassPermissions` is acceptable (throwaway container) and when it isn't (this machine with your `.env`).
-- [ ] **2.4 Sandbox.** Turn it on with `/sandbox`.
+  - Notes: `permissions.defaultMode` is `default` (Manual) in `.claude/settings.json`, the safest start for a repo with live credentials. `bypassPermissions` is acceptable only in a throwaway container with no real credentials, such as a CI job or a disposable VM. It is not acceptable on this machine, because `.env` holds live keys and a prompt-injected page could make Claude act on them without asking. `dontAsk` plus an explicit allow list is the right mode for unattended agents like the Phase 9 bot.
+- [x] **2.4 Sandbox.** Turn it on with `/sandbox`.
   - Restrict `sandbox.network.allowedDomains` to `api.openai.com`, `api.tavily.com`, `api.heygen.com`, `discord.com` and `*.discord.gg`.
   - Run the bot inside it.
   - Done when you've watched a request to a domain outside the list get blocked.
-- [ ] **2.5 Extras.**
+- [x] **2.5 Extras.**
   - Add an `env` block in settings.
   - Build a `statusLine` with `/statusline` showing model, git branch and context %.
   - Explore `/config`, `/model` and `/effort`.
