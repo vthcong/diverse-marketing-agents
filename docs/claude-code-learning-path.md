@@ -95,10 +95,11 @@ Differences to keep in mind:
 
 ## Phase 3: Skills (slash commands)
 
-- [ ] **3.1 `/smoke-test`.** Write `scripts/smoke_test.py`, the mocked-graph harness described in `CLAUDE.md`, then wrap it in `.claude/skills/smoke-test/SKILL.md`.
+- [x] **3.1 `/smoke-test`.** Write `scripts/smoke_test.py`, the mocked-graph harness described in `CLAUDE.md`, then wrap it in `.claude/skills/smoke-test/SKILL.md`.
   - Practise frontmatter: `description`, `allowed-tools` and `disable-model-invocation: true`.
   - Add `context: fork` (with `background: false` to wait for the result), so the test output stays in a forked subagent and only the verdict reaches your context.
   - Done when `/smoke-test` runs a full mocked turn. This also gives the repo its first test.
+  - Notes: the harness neutralises `load_dotenv` so it never reads the real `.env`, and fakes OpenAI per persona via `MockTransport`. `disable-model-invocation` hides the skill from Claude's list, so `/reload-skills` doesn't count it.
 - [ ] **3.2 Model-invoked skill.** Create `.claude/skills/campaign-brief/` containing `SKILL.md` and a `template.md`.
   - Use `$ARGUMENTS`, plus `!` bash injection for live context (e.g. `!`ls workspace``).
   - Also try named `arguments` (e.g. `[brand, channel]`, used as `$brand`), `argument-hint`, and `when_to_use` with trigger phrases.
