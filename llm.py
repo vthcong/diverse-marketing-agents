@@ -3,10 +3,10 @@ import asyncio
 from collections.abc import Sequence
 
 from langchain_core.messages import HumanMessage, SystemMessage, ToolMessage
-from langchain_core.tools import BaseTool
+from langchain_core.tools import BaseTool, tool
 from langchain_openai import ChatOpenAI
 
-from personas import PERSONAS, llm_kwargs, load_persona, load_team
+from personas import PERSONAS, llm_kwargs, load_persona, load_team, read_skill, skill_catalog
 from state import Persona, State
 
 MAX_TOOL_ROUNDS = 15
@@ -19,7 +19,20 @@ LLMS: dict[Persona, ChatOpenAI] = {persona: ChatOpenAI(**llm_kwargs(persona)) fo
 
 
 def system_prompt(persona: Persona) -> SystemMessage:
-    return SystemMessage(f"{load_team()}\n\n{load_persona(persona)}")
+    return SystemMessage("\n\n".join(filter(None, [load_team(), load_persona(persona), skill_catalog(persona)])))
+
+
+def skill_tool(persona: Persona) -> BaseTool:
+    names = PERSONAS[persona]["skills"]
+
+    @tool
+    def load_skill(name: str, file: str = "SKILL.md") -> str:
+        """Load the full instructions of one of your skills, or one of its extra files (such as reference.md) when the skill points you to it."""
+        if name not in names:
+            return f"No skill called {name!r}. Your skills: {', '.join(names)}."
+        return read_skill(name, file)
+
+    return load_skill
 
 
 def roster() -> str:
@@ -74,7 +87,8 @@ def agent_context(state: State, task: str) -> str:
 
 async def run_agent(persona: Persona, state: State, task: str, tools: Sequence[BaseTool]) -> str:
     """Runs one persona's turn: shows it the team context and its task, lets it call its tools until it answers, and returns its reply text."""
-    llm = LLMS[persona].bind_tools(list(tools))
+    tools = [*tools, skill_tool(persona)] if PERSONAS[persona]["skills"] else list(tools)
+    llm = LLMS[persona].bind_tools(tools)
     tools_by_name = {t.name: t for t in tools}
     convo = [system_prompt(persona), HumanMessage(agent_context(state, task))]
 

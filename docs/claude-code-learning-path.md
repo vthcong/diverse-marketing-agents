@@ -100,12 +100,13 @@ Differences to keep in mind:
   - Add `context: fork` (with `background: false` to wait for the result), so the test output stays in a forked subagent and only the verdict reaches your context.
   - Done when `/smoke-test` runs a full mocked turn. This also gives the repo its first test.
   - Notes: the harness neutralises `load_dotenv` so it never reads the real `.env`, and fakes OpenAI per persona via `MockTransport`. `disable-model-invocation` hides the skill from Claude's list, so `/reload-skills` doesn't count it.
-- [ ] **3.2 Model-invoked skill.** Create `.claude/skills/campaign-brief/` containing `SKILL.md` and a `template.md`.
+- [x] **3.2 Model-invoked skill.** Create `.claude/skills/campaign-brief/` containing `SKILL.md` and a `template.md`.
   - Use `$ARGUMENTS`, plus `!` bash injection for live context (e.g. `!`ls workspace``).
   - Also try named `arguments` (e.g. `[brand, channel]`, used as `$brand`), `argument-hint`, and `when_to_use` with trigger phrases.
   - Optional: check how reliably it triggers with the `skill-creator` skill's evals.
   - Done when Claude loads it on its own from a plain request like "draft a brief for a coffee brand".
-- [ ] **3.3 Know-how skills for the team.** The persona prompts say *what* each agent does. They say little about *how to do it well*. Write these as `.claude/skills/<name>/SKILL.md`, each short (about 300 words or fewer), with a `description` that says when to use it. Do the essentials first.
+  - Notes: when Claude auto-invoked the skill it passed no `args`, so `$brand`, `$channel` and `$ARGUMENTS` rendered empty and the skill inferred them from the request (or asked one question). Claude can pass `args` when it calls the Skill tool, so this is a habit of that run, not a rule. A typed `/campaign-brief "The Coffee House" Instagram` fills them. The `!ls workspace` line also showed the existing job, which stopped the skill overwriting it.
+- [x] **3.3 Know-how skills for the team.** The persona prompts say *what* each agent does. They say little about *how to do it well*. Write these as `.claude/skills/<name>/SKILL.md`, each short (about 300 words or fewer), with a `description` that says when to use it. Do the essentials first.
   - **Team-wide** (several agents need the same know-how):
 
     | Skill | Used by | Why | Priority |
@@ -133,6 +134,7 @@ Differences to keep in mind:
   - **Wire them up in 4.2** with each agent's `skills:` frontmatter. Preloading puts the full text in every run, so check the cost with `/context` and `/usage` (4.4).
   - **Open question to decide while you write them:** the LangGraph bot only benefits if `personas.py` also reads these files (and strips the frontmatter). Either add that small loader so both systems share one copy, or accept that these are Claude Code-only. Record your choice under `Notes:`.
   - Done when the essential skills exist, Claude loads at least one on its own from a plain request, and you've compared a Scout or Content run with and without its skill.
+  - Notes: chose the shared copy. `personas.py` gives each persona a `skills` list of folder names in `.claude/skills/`, the same folders Claude Code reads, so each skill exists once. The LangGraph agents load them on demand (`load_skill`); Lead's list is empty because its routing call has no tool loop. Claude auto-loaded `caption-writing`, `platform-specs` and `fact-grounding` from the plain request "Write 3 Instagram captions for The Coffee House's new cold brew".
 
 ## Phase 4: Subagents (the core rebuild)
 
