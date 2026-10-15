@@ -1,1 +1,2 @@
 - [Source reliability: B2B fintech](reference_source_reliability_fintech.md) — official site good for product, weak for CEO; avoid aggregators, vendor profiles, unread summaries
+- [Source reliability: retail sustainability](reference_source_reliability_retail_sustainability.md) — brand summary pages good, report hosts 403, criticism is NGO/blog
