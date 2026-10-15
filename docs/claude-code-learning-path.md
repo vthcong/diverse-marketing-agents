@@ -81,7 +81,7 @@ Differences to keep in mind:
   - Deny rules apply in every mode, even `bypassPermissions`.
   - Set `permissions.defaultMode`.
   - Write down when `bypassPermissions` is acceptable (throwaway container) and when it isn't (this machine with your `.env`).
-  - Notes: `permissions.defaultMode` is `default` (Manual) in `.claude/settings.json`, the safest start for a repo with live credentials. `bypassPermissions` is acceptable only in a throwaway container with no real credentials, such as a CI job or a disposable VM. It is not acceptable on this machine, because `.env` holds live keys and a prompt-injected page could make Claude act on them without asking. `dontAsk` plus an explicit allow list is the right mode for unattended agents like the Phase 9 bot.
+  - Notes: `permissions.defaultMode` is `auto` in `.claude/settings.json`, so a classifier model reviews actions instead of me, and the sandbox plus the deny rules still bound what it can do. Manual (`default`) would be the stricter choice for a repo with live credentials. `bypassPermissions` is acceptable only in a throwaway container with no real credentials, such as a CI job or a disposable VM. It is not acceptable on this machine, because `.env` holds live keys and a prompt-injected page could make Claude act on them without asking. `dontAsk` plus an explicit allow list is the right mode for unattended agents like the Phase 9 bot.
 - [x] **2.4 Sandbox.** Turn it on with `/sandbox`.
   - Restrict `sandbox.network.allowedDomains` to `api.openai.com`, `api.tavily.com`, `api.heygen.com`, `discord.com` and `*.discord.gg`.
   - Run the bot inside it.
