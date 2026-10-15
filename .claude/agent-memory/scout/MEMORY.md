@@ -1,0 +1,1 @@
+- [Source reliability: B2B fintech](reference_source_reliability_fintech.md) — official site good for product, weak for CEO; avoid aggregators, vendor profiles, unread summaries

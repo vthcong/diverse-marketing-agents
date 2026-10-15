@@ -6,3 +6,4 @@ __pycache__/
 checkpoints.sqlite*
 .claude/settings.local.json
 CLAUDE.local.md
+workspace/

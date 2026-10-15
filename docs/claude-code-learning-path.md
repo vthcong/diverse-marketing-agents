@@ -138,14 +138,15 @@ Differences to keep in mind:
 
 ## Phase 4: Subagents (the core rebuild)
 
-- [ ] **4.1 Built-in agents.** Open `/agents`, then use the built-in Explore, Plan and general-purpose agents on this repo.
-  - Note what each one can and can't do.
-- [ ] **4.2 Specialists.** Create `.claude/agents/scout.md`, `content.md` and `producer.md`.
+- [x] **4.1 Built-in agents.** The `/agents` wizard has been removed, so ask Claude "which subagent types are available and what tools does each have?", then use the built-in Explore, Plan and general-purpose agents on this repo.
+  - Note what each one can and can't do. Explore and Plan are read-only (no Edit or Write); general-purpose has every tool.
+- [x] **4.2 Specialists.** Create `.claude/agents/scout.md`, `content.md` and `producer.md` by hand or by asking Claude to write them (there is no `/agents` wizard any more).
   - Frontmatter: `name`, `description`, `tools`, `model`, `color`.
   - Each agent body begins "First read `personas/team.md` and `personas/<role>.md`", so your existing prompts stay the single source of truth.
   - Agents write their outputs to `workspace/<job>/` (`brief.md`, `findings.md`, `drafts.md`, `chosen.md`, `video_script.md`).
   - Beyond those five fields ([full list](https://code.claude.com/docs/en/sub-agents)): try `effort`, `disallowedTools`, `permissionMode`, and `memory: project` on Scout so it keeps notes on good sources across sessions.
   - `skills:` preloads Claude Code skills into an agent at startup, e.g. give Content `caption-writing` and `campaign-brief`, and Scout `source-vetting`. The full table of which agent gets which skill is in 3.3. It only takes `.claude/skills/` skills, not the persona prompts in `personas/`.
+  - Notes: ran all three in order on a new job (`workspace/hyperlayer-ceo-intro/`). Subagents can't call each other, so the main session ran them one by one, because each reads the previous agent's file. Scout's `Write` to `findings.md` was rejected by a harness rule ("Subagents should return findings as text"), even though `Write` is in its `tools:` list, so the main session saved it. `tools:` says what an agent may use, not that every call is allowed. The same Scout could write to its own memory folder (`.claude/agent-memory/scout/`: a `MEMORY.md` index plus a source-reliability note), so the rule blocks report files, not all writes; `memory:` also switches on Read, Write and Edit for the agent. Producer has no HeyGen tools and stops at `video_script.md`; rendering comes with 5.1 and the approval gate with 6.1.
 - [ ] **4.3 Lead as the main thread.** Create `.claude/agents/lead.md` from `personas/lead.md`, then run `claude --agent lead` (or set `"agent": "lead"` in settings).
   - Add `initialPrompt` to `lead.md` to send a first turn automatically when it runs as the main agent (e.g. "list the jobs in workspace/ and ask which to continue").
   - Done when "campaign for X" runs research → drafts → pick → video script and stops for your approval.
