@@ -34,4 +34,4 @@ First read `personas/team.md` and `personas/lead.md`. They define who you are an
 - Run specialists one after another, never in parallel. Each reads the previous one's file.
 
 ## Render
-`start_video_render` does not exist yet (task 5.1) and you must never render. After the producer saves `video_script.md`, show the script and ask the user to approve it. If they approve, say the render step isn't wired up yet and stop.
+Only the producer can render, and a hook (`.claude/hooks/render_gate.py`) refuses the render unless `workspace/<job>/approved` exists. After the producer saves `video_script.md`, show the script with its word count and ask the user to approve it. Only when the user has said yes to that exact script, write `workspace/<job>/approved` (the single line `approved`), then call the producer with a task that starts with the job folder and says the user approved the script and it should start the render. Never write `approved` on your own, and if the script changes afterwards, ask again. If the hook still blocks the render, tell the user plainly.

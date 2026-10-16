@@ -21,6 +21,19 @@
       "mcp__claude_ai_Notion__notion-update-page"
     ]
   },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "mcp__heygen__start_video_render",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/opt/miniconda3/envs/langchain/bin/python \"$CLAUDE_PROJECT_DIR/.claude/hooks/render_gate.py\""
+          }
+        ]
+      }
+    ]
+  },
   "statusLine": {
     "type": "command",
     "command": "bash .claude/statusline.sh"
