@@ -29,6 +29,25 @@
             "command": "/opt/miniconda3/envs/langchain/bin/python \"$CLAUDE_PROJECT_DIR/.claude/hooks/render_gate.py\""
           }
         ]
+      },
+      {
+        "matcher": "Agent|Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/opt/miniconda3/envs/langchain/bin/python \"$CLAUDE_PROJECT_DIR/.claude/hooks/loop_cap.py\""
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/opt/miniconda3/envs/langchain/bin/python \"$CLAUDE_PROJECT_DIR/.claude/hooks/loop_cap.py\""
+          }
+        ]
       }
     ],
     "PostToolUse": [
@@ -58,6 +77,10 @@
           {
             "type": "command",
             "command": "/opt/miniconda3/envs/langchain/bin/python \"$CLAUDE_PROJECT_DIR/.claude/hooks/prompt_secret_guard.py\""
+          },
+          {
+            "type": "command",
+            "command": "/opt/miniconda3/envs/langchain/bin/python \"$CLAUDE_PROJECT_DIR/.claude/hooks/loop_cap.py\""
           }
         ]
       }

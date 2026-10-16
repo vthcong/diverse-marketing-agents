@@ -9,4 +9,5 @@ CLAUDE.local.md
 workspace/
 experiments/
 .claude/hooks/.smoke_pass
+.claude/hooks/.loop_cap.json
 
