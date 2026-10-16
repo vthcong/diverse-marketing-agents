@@ -10,7 +10,15 @@ from dotenv import load_dotenv
 from langchain_core.tools import BaseTool, tool
 from langchain_tavily import TavilyExtract, TavilySearch
 
-from heygen import heygen_start, heygen_status, render_exists_message, script_length_error, status_message
+from heygen import (
+    heygen_start,
+    heygen_status,
+    render_blocks_new_one,
+    render_exists_message,
+    render_fingerprint,
+    script_length_error,
+    status_message,
+)
 from state import State
 
 load_dotenv()
@@ -135,10 +143,12 @@ def producer_tools(ws: Workspace) -> list[BaseTool]:
         """Start rendering the saved script into an avatar video. Costs credits: only call after the user has approved the current script. Pass replace_existing=true only if the user wants a new render although one already exists."""
         if "video_script" in ws.updates:
             return "You wrote this script during this same turn, so the user hasn't seen it yet. Show it to them and wait for their approval first."
-        if ws.get("video_status") in ("rendering", "completed") and not replace_existing:
+        script = ws.get("video_script")
+        fingerprint = render_fingerprint(script)
+        if not replace_existing and render_blocks_new_one(ws.get("video_status"), ws.get("video_fingerprint"), fingerprint):
             return render_exists_message(ws.get("video_status"), ws.get("video_job_id"))
-        video_id = await heygen_start(ws.get("video_script"))
-        ws.set(video_job_id=video_id, video_status="rendering", video_url="")
+        video_id = await heygen_start(script)
+        ws.set(video_job_id=video_id, video_status="rendering", video_url="", video_fingerprint=fingerprint)
         _spawn_render_watcher(ws.thread_id, video_id)
         return f"Render started (job {video_id}). It takes a few minutes, and the finished link is posted in the channel automatically."
 

@@ -45,7 +45,7 @@ async def lead(state: State) -> dict:
 
     update: dict = {"next_agent": route.next, "task": route.task}
     if route.new_job:
-        update.update(drafts=[], chosen_draft="", video_script="", video_job_id="", video_status="", video_url="")
+        update.update(drafts=[], chosen_draft="", video_script="", video_job_id="", video_status="", video_url="", video_fingerprint="")
     if route.brief:
         update["brief"] = route.brief
     if route.message:

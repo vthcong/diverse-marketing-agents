@@ -2,6 +2,8 @@
 
 Keep this module free of LangChain, LangGraph and MCP imports so both sides can depend on it without depending on each other.
 """
+import hashlib
+import json
 import os
 
 import httpx
@@ -11,7 +13,25 @@ load_dotenv()
 
 HEYGEN_BASE = "https://api.heygen.com"
 HEYGEN_RESOLUTION = "720p"  # every video is rendered at 720p
+HEYGEN_ASPECT_RATIO = "9:16"
 MAX_VIDEO_WORDS = 50  # HeyGen has no max-duration setting, so the script length is the only cap; at ~0.5 s per word this is about 25 seconds
+
+
+def render_fingerprint(script: str) -> str:
+    """A hash of everything that decides what the video looks and sounds like. Same fingerprint means the same video, so rendering again would only burn credits."""
+    inputs = {
+        "script": script.strip(),
+        "avatar_id": os.environ["HEYGEN_AVATAR_ID"],
+        "voice_id": os.environ["HEYGEN_VOICE_ID"],
+        "resolution": HEYGEN_RESOLUTION,
+        "aspect_ratio": HEYGEN_ASPECT_RATIO,
+    }
+    return hashlib.sha256(json.dumps(inputs, sort_keys=True).encode()).hexdigest()
+
+
+def render_blocks_new_one(status: str, saved_fingerprint: str | None, fingerprint: str) -> bool:
+    """True when the saved render already covers this exact video. A render saved before fingerprints existed has none, so it can't be compared and keeps blocking (replace_existing is the way past it)."""
+    return status in ("rendering", "completed") and (not saved_fingerprint or saved_fingerprint == fingerprint)
 
 
 async def heygen_start(script: str) -> str:
@@ -22,7 +42,7 @@ async def heygen_start(script: str) -> str:
         "voice_id": os.environ["HEYGEN_VOICE_ID"],
         "script": script,
         "resolution": HEYGEN_RESOLUTION,
-        "aspect_ratio": "9:16",
+        "aspect_ratio": HEYGEN_ASPECT_RATIO,
     }
     async with httpx.AsyncClient(timeout=30) as client:
         resp = await client.post(
@@ -52,7 +72,7 @@ def script_length_error(script: str) -> str | None:
 
 
 def render_exists_message(status: str, video_id: str) -> str:
-    return f"A render is already {status} (job {video_id}). Only pass replace_existing=true if the user wants a new one."
+    return f"A render of this script, avatar and voice is already {status} (job {video_id}). Only pass replace_existing=true if the user wants a new one anyway."
 
 
 def status_message(data: dict) -> str:

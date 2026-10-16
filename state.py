@@ -32,3 +32,4 @@ class State(TypedDict, total=False):
     video_job_id: str
     video_status: str  # "rendering" | "completed" | "failed" | "timeout"
     video_url: str
+    video_fingerprint: str  # heygen.render_fingerprint of the render that video_job_id belongs to

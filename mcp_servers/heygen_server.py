@@ -1,6 +1,6 @@
 """MCP server that exposes the HeyGen video tools to Claude Code.
 
-State lives in files under workspace/<job>/: video_script.md is the spoken script and render.json holds the HeyGen job id and last known status. The render approval gate is deliberately not here: it is a permission rule (5.2) and a hook (6.1).
+State lives in files under workspace/<job>/: video_script.md is the spoken script and render.json holds the HeyGen job id, last known status and the fingerprint of what was rendered. The render approval gate is deliberately not here: it is a permission rule (5.2) and a hook (6.1).
 """
 import json
 import re
@@ -12,7 +12,15 @@ sys.path.insert(0, str(ROOT))  # a script run by path only has its own folder on
 
 from mcp.server.fastmcp import FastMCP
 
-from heygen import heygen_start, heygen_status, render_exists_message, script_length_error, status_message
+from heygen import (
+    heygen_start,
+    heygen_status,
+    render_blocks_new_one,
+    render_exists_message,
+    render_fingerprint,
+    script_length_error,
+    status_message,
+)
 
 WORKSPACE = ROOT / "workspace"
 
@@ -44,13 +52,14 @@ def set_video_plan(job: str, script: str) -> str:
 async def start_video_render(job: str, replace_existing: bool = False) -> str:
     """Start rendering the saved script of a job into an avatar video. Costs credits: only call after the user has approved the current script. Pass replace_existing=true only if the user wants a new render although one already exists."""
     render_file = _render_file(job)
+    script = (_job_dir(job) / "video_script.md").read_text().strip()
+    fingerprint = render_fingerprint(script)
     if render_file.exists() and not replace_existing:
         state = json.loads(render_file.read_text())
-        if state["status"] in ("rendering", "completed"):
+        if render_blocks_new_one(state["status"], state.get("fingerprint"), fingerprint):
             return render_exists_message(state["status"], state["video_id"])
-    script = (_job_dir(job) / "video_script.md").read_text().strip()
     video_id = await heygen_start(script)
-    render_file.write_text(json.dumps({"video_id": video_id, "status": "rendering", "video_url": ""}))
+    render_file.write_text(json.dumps({"video_id": video_id, "status": "rendering", "video_url": "", "fingerprint": fingerprint}))
     return f"Render started (job {video_id}). It takes a few minutes; use check_video_status to see when it is done."
 
 
