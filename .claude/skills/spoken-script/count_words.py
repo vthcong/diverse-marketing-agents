@@ -16,7 +16,7 @@ UNSPEAKABLE = {
 }
 
 script = " ".join(sys.argv[1:]) or sys.stdin.read()
-words = len(script.split())  # same count as tools.py
+words = len(script.split())  # same count as heygen.script_length_error
 problems = [f"contains a {label}" for pattern, label in UNSPEAKABLE.items() if re.search(pattern, script)]
 if words > MAX_VIDEO_WORDS:
     problems.append(f"{words - MAX_VIDEO_WORDS} words over the {MAX_VIDEO_WORDS}-word cap")

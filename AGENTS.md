@@ -11,7 +11,7 @@ Dependencies are pinned in `requirements.txt` and already installed in the conda
 
 ## Testing
 
-No test suite or linter is checked in. To exercise the whole graph without Discord or a real OpenAI key: set a dummy `OPENAI_API_KEY` before importing, replace each `llm.LLMS[persona]` with `ChatOpenAI(api_key="x", max_retries=0, http_async_client=httpx.AsyncClient(transport=httpx.MockTransport(fake_openai)))`, replace `tools.TavilySearch` / `tools.TavilyExtract` and monkeypatch `tools.heygen_start` / `tools.heygen_status`, build the app with `async with AsyncSqliteSaver.from_conn_string(tmp) as saver: discord_bot.app = graph.build_graph(saver)`, put a fake hook in `discord_bot.webhooks[channel_id]`, and drive turns with `await discord_bot.handle_turn(fake_channel, "Name: text")`. The real client, tool-binding, structured-output and LangGraph paths all run; only the model's decisions are scripted.
+No linter is checked in. The one test is `scripts/smoke_test.py`: run `/opt/miniconda3/envs/langchain/bin/python scripts/smoke_test.py`, or the `/smoke-test` skill. It drives two full turns through `discord_bot.handle_turn` with no Discord or real API keys: a dummy `OPENAI_API_KEY`, each `llm.LLMS[persona]` swapped for a `ChatOpenAI` over `httpx.MockTransport`, and Tavily, HeyGen and the webhook faked. The real client, tool-binding, structured-output and LangGraph paths all run; only the model's decisions are scripted. The `Stop` hook `.claude/hooks/smoke_gate.py` runs it whenever the code has changed.
 
 ## Error handling policy
 

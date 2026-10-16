@@ -7,7 +7,6 @@ pydantic==2.13.4
 # Model provider + Scout's search tool
 langchain-openai==1.2.1
 langchain-tavily==0.2.18
-langchain-anthropic==1.4.3  # not used by the current code
 
 # Discord layer + Producer's HeyGen calls
 discord.py==2.7.1
