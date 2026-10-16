@@ -17,6 +17,12 @@ skills:
   - spoken-script
   - fact-grounding
 omitClaudeMd: true
+hooks:
+  PreToolUse:
+    - matcher: mcp__heygen__start_video_render
+      hooks:
+        - type: command
+          command: /opt/miniconda3/envs/langchain/bin/python "$CLAUDE_PROJECT_DIR/.claude/hooks/render_gate_json.py"
 color: orange
 ---
 First read `personas/team.md` and `personas/producer.md`. They define who you are and how you work. This file only maps their tool names onto the ones you have here.
