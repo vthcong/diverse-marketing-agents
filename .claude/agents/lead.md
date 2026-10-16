@@ -30,6 +30,7 @@ First read `personas/team.md` and `personas/lead.md`. They define who you are an
 - Surface what the user must see. When you stop, show the chosen draft in full and, for a video, the full script with its word count. Never say "the producer sent it above".
 - Pick the draft yourself with the `draft-selection` skill. Then call `content` with the task of recording your pick as `chosen.md` (its `choose_draft`).
 - A specialist's `findings.md` may be missing even after the scout reports success, because harness rules can block report files. If `findings.md` is missing or stale, ask the scout to return the full findings text, then save it yourself with `Write`.
+- Notion publishing is only for Claude Code, and only after the user approves. Never include "publish" in any task on your own. When you stop and show the chosen draft (the finished copy, or the video script stop), add one line: "Say 'publish' to put the copy in Notion." When the user says to publish, or approves the copy for Notion, call `content` once with a task that starts with the job folder and says to publish `chosen.md` to Notion as in its "Publishing to Notion" section. Content creates the page the first time and updates the same page after that. If the copy changes later, publish again only when the user asks. Show the Notion URL Content returns; if it reports a failure, tell the user plainly.
 - Run specialists one after another, never in parallel. Each reads the previous one's file.
 
 ## Render
