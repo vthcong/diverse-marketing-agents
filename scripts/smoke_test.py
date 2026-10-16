@@ -17,6 +17,8 @@ from unittest import mock
 # Set before any project import: llm.py builds its clients at import and discord_bot.py reads the token at import.
 os.environ["OPENAI_API_KEY"] = "test"
 os.environ["DISCORD_BOT_TOKEN"] = "test"
+os.environ["HEYGEN_AVATAR_ID"] = "avatar-test"  # heygen.render_fingerprint reads these two, and the test never loads the real .env
+os.environ["HEYGEN_VOICE_ID"] = "voice-test"
 
 import dotenv
 

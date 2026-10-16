@@ -32,6 +32,28 @@
           }
         ]
       }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/opt/miniconda3/envs/langchain/bin/python \"$CLAUDE_PROJECT_DIR/.claude/hooks/py_syntax_check.py\""
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/opt/miniconda3/envs/langchain/bin/python \"$CLAUDE_PROJECT_DIR/.claude/hooks/smoke_gate.py\"",
+            "timeout": 150
+          }
+        ]
+      }
     ]
   },
   "statusLine": {

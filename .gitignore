@@ -8,3 +8,5 @@ checkpoints.sqlite*
 CLAUDE.local.md
 workspace/
 experiments/
+.claude/hooks/.smoke_pass
+
