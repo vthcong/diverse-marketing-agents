@@ -13,8 +13,6 @@
       "Read(./checkpoints.sqlite*)"
     ],
     "ask": [
-      "Bash(git add *)",
-      "Bash(git commit *)",
       "Bash(git push *)",
       "mcp__heygen__start_video_render",
       "mcp__claude_ai_Notion__notion-create-pages",
@@ -40,6 +38,26 @@
           {
             "type": "command",
             "command": "/opt/miniconda3/envs/langchain/bin/python \"$CLAUDE_PROJECT_DIR/.claude/hooks/py_syntax_check.py\""
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/opt/miniconda3/envs/langchain/bin/python \"$CLAUDE_PROJECT_DIR/.claude/hooks/session_next_task.py\""
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/opt/miniconda3/envs/langchain/bin/python \"$CLAUDE_PROJECT_DIR/.claude/hooks/prompt_secret_guard.py\""
           }
         ]
       }
