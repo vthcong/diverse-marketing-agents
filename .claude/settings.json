@@ -52,6 +52,26 @@
         ]
       }
     ],
+    "TaskCompleted": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/opt/miniconda3/envs/langchain/bin/python \"$CLAUDE_PROJECT_DIR/.claude/hooks/task_completed_gate.py\""
+          }
+        ]
+      }
+    ],
+    "TeammateIdle": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/opt/miniconda3/envs/langchain/bin/python \"$CLAUDE_PROJECT_DIR/.claude/hooks/teammate_idle_gate.py\""
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
       {
         "matcher": "Edit|Write",

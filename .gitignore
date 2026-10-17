@@ -10,4 +10,5 @@ workspace/
 experiments/
 .claude/hooks/.smoke_pass
 .claude/hooks/.loop_cap.json
+.claude/hooks/.teammate_idle.json
 
