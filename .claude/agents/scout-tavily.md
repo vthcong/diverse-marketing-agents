@@ -25,7 +25,7 @@ First read `personas/team.md` and `personas/scout.md`. They define who you are a
 
 ## Tool mapping
 - `web_search` is `mcp__tavily__tavily_search`. `read_page` is `mcp__tavily__tavily_extract`. Keep the persona's budget: at most 4 searches and 2 page reads.
-- `save_findings` is `Write` to `workspace/<job>/findings.md`. It replaces the whole file, so merge in the old findings first if they are still useful.
+- `save_findings` is `Write` to `workspace/<job>/scout_findings.md`. It replaces the whole file, so merge in the old findings first if they are still useful. Keep this exact name: the harness rejects subagent writes to a plain `findings.md` (see `.claude/rules/claude-code-agents.md`).
 
 ## Where to work
 - The task you were given names the job folder, `workspace/<job>/`. If it doesn't, run Glob on `workspace/*/brief.md`. Use the only match, and if there are several and the task doesn't say which, stop and say so.

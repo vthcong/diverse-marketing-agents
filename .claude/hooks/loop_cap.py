@@ -5,9 +5,10 @@ One script handles three events, told apart by `hook_event_name`, and they share
 - PreToolUse on the Agent tool: Lead is about to start a specialist. If it is the same one that just finished MAX_CONSECUTIVE times, exit 2 denies the call and its stderr tells Lead to move on. SubagentStop cannot do this itself: it fires after a run and its exit 2 only makes that subagent keep working.
 - UserPromptSubmit: a new user message is a new turn, so the count starts over.
 
-It does not catch an A, B, A, B ping-pong, and a crash here exits 1, which lets the call through.
+It does not catch an A, B, A, B ping-pong, and a crash here exits 1, which lets the call through. Concurrent hooks can still lose an update (read, change, write), so a count may be off by one, but the file is never left corrupt.
 """
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -17,14 +18,19 @@ MAX_CONSECUTIVE = 2  # the third run in a row is the one that gets blocked
 
 def load_state(session_id: str) -> dict:
     if STATE_FILE.exists():
-        state = json.loads(STATE_FILE.read_text())
-        if state["session_id"] == session_id:
+        try:
+            state = json.loads(STATE_FILE.read_text())
+        except json.JSONDecodeError:  # a torn write from a concurrent hook; the count is disposable, so start over
+            state = {}
+        if state.get("session_id") == session_id:
             return state
     return {"session_id": session_id, "agent": None, "count": 0}
 
 
 def save_state(state: dict) -> None:
-    STATE_FILE.write_text(json.dumps(state))
+    tmp = STATE_FILE.with_suffix(f".{os.getpid()}.tmp")  # per-process name so two hooks never share a temp file
+    tmp.write_text(json.dumps(state))
+    os.replace(tmp, STATE_FILE)  # atomic swap: readers see the old file or the new one, never a mix
 
 
 event = json.load(sys.stdin)

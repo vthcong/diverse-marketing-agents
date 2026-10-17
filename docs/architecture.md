@@ -19,4 +19,4 @@ A LangGraph state machine drives four LLM agents (Lead, Scout, Content, Producer
 - One persistent conversation per text channel; the bot's login only listens and all agent output goes through a webhook.
 
 ## Path-scoped rules
-Details that only matter when editing a file live in `.claude/rules/` and load only when that file is read: `graph.md` (`graph.py`, `state.py`), `llm.md` (`llm.py`, `personas.py`), `discord.md` (`discord_bot.py`), `heygen.md` (`tools.py`, `heygen.py`, `mcp_servers/heygen_server.py`).
+Details that only matter when editing a file live in `.claude/rules/` and load only when that file is read: `graph.md` (`graph.py`, `state.py`), `llm.md` (`llm.py`, `personas.py`), `discord.md` (`discord_bot.py`), `heygen.md` (`tools.py`, `heygen.py`, `mcp_servers/heygen_server.py`), `claude-code-agents.md` (`.claude/agents/*.md`, including why the scout's file is `scout_findings.md`).
