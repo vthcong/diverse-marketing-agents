@@ -266,7 +266,7 @@ Your sound hooks in `~/.claude/settings.json` are the warm-up: `PreToolUse`, `No
   - Add a local marketplace at `.claude-plugin/marketplace.json`.
   - Install it with `/plugin marketplace add ./` and `/plugin install`.
   - Check it with `claude plugin validate`.
-- [ ] **8.2 Read a real plugin.** Install one plugin from the official marketplace and study how it's structured.
+- [x] **8.2 Read a real plugin.** Install one plugin from the official marketplace and study how it's structured.
 - [ ] **8.3 Evals.** Run `claude plugin eval init` on `plugins/marketing-team/` to generate a suite of cases and graders, then run it with `claude plugin eval`. See [Test plugins with evals](https://code.claude.com/docs/en/plugin-evals).
   - Graders can be a regex over the reply, whether a tool was called, or a rubric a second model judges.
   - Good cases for this team: Lead stops before rendering; Scout writes `scout_findings.md`; the video script stays under 50 words.
