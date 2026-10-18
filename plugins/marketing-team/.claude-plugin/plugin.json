@@ -1,0 +1,16 @@
+{
+  "name": "marketing-team",
+  "displayName": "Marketing Team",
+  "version": "0.1.0",
+  "description": "Lead, scout, content and producer agents that run a marketing campaign from brief to approved video script, with the skills, hooks and MCP servers they need",
+  "author": { "name": "Vuong, Thanh Cong" },
+  "keywords": ["marketing", "agents", "campaign"],
+  "userConfig": {
+    "python": {
+      "type": "string",
+      "title": "Python interpreter",
+      "description": "Python that runs the HeyGen MCP server and the hook scripts; needs mcp, httpx and python-dotenv installed",
+      "default": "/opt/miniconda3/envs/langchain/bin/python"
+    }
+  }
+}

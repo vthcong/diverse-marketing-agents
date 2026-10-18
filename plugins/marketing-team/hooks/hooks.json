@@ -1,0 +1,64 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "mcp__plugin_marketing-team_heygen__start_video_render",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PLUGIN_OPTION_PYTHON\" \"${CLAUDE_PLUGIN_ROOT}/hooks/render_gate.py\""
+          }
+        ]
+      },
+      {
+        "matcher": "Agent|Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PLUGIN_OPTION_PYTHON\" \"${CLAUDE_PLUGIN_ROOT}/hooks/loop_cap.py\""
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PLUGIN_OPTION_PYTHON\" \"${CLAUDE_PLUGIN_ROOT}/hooks/loop_cap.py\""
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PLUGIN_OPTION_PYTHON\" \"${CLAUDE_PLUGIN_ROOT}/hooks/loop_cap.py\""
+          }
+        ]
+      }
+    ],
+    "TaskCompleted": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PLUGIN_OPTION_PYTHON\" \"${CLAUDE_PLUGIN_ROOT}/hooks/task_completed_gate.py\""
+          }
+        ]
+      }
+    ],
+    "TeammateIdle": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PLUGIN_OPTION_PYTHON\" \"${CLAUDE_PLUGIN_ROOT}/hooks/teammate_idle_gate.py\""
+          }
+        ]
+      }
+    ]
+  }
+}

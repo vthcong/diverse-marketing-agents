@@ -1,0 +1,12 @@
+{
+  "name": "marketing-agents",
+  "description": "Plugins from the diverse marketing agents project",
+  "owner": { "name": "Vuong, Thanh Cong" },
+  "plugins": [
+    {
+      "name": "marketing-team",
+      "source": "./plugins/marketing-team",
+      "description": "Lead, scout, content and producer agents that run a marketing campaign from brief to approved video script"
+    }
+  ]
+}

@@ -262,7 +262,7 @@ Your sound hooks in `~/.claude/settings.json` are the warm-up: `PreToolUse`, `No
 
 ## Phase 8: Plugins
 
-- [ ] **8.1 Package your setup.** Bundle the agents, skills, hooks and MCP config into `plugins/marketing-team/` with `.claude-plugin/plugin.json`.
+- [x] **8.1 Package your setup.** Bundle the agents, skills, hooks and MCP config into `plugins/marketing-team/` with `.claude-plugin/plugin.json`.
   - Add a local marketplace at `.claude-plugin/marketplace.json`.
   - Install it with `/plugin marketplace add ./` and `/plugin install`.
   - Check it with `claude plugin validate`.

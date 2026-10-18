@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "tavily": {
+      "command": "npx",
+      "args": ["-y", "tavily-mcp@0.2.22"]
+    },
+    "heygen": {
+      "command": "${user_config.python}",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/servers/heygen_server.py"]
+    }
+  }
+}
