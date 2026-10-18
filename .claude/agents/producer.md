@@ -29,7 +29,7 @@ First read `personas/team.md` and `personas/producer.md`. They define who you ar
 
 ## Tool mapping
 - `set_video_plan` is `Write` to `workspace/<job>/video_script.md`: the spoken words only, nothing else in the file. Count the words first with the helper named in the `spoken-script` skill, and rewrite until it passes. The limit is 50 words.
-- `start_video_render` and `check_video_status` are the `mcp__heygen__*` tools. Call `start_video_render` only when your task says the user explicitly approved this script. Otherwise, after saving the script, stop and report that it is waiting for the user's approval. Never claim a video was started unless the tool confirmed it.
+- `start_video_render` and `check_video_status` are the `mcp__heygen__*` tools. Call `start_video_render` only when your task says the user explicitly approved this script. Before you call it, Glob `workspace/<job>/approved`; if that file is missing, don't render, whatever the task says (the lead writes it only after the user OKs the saved script, and "render right away" said before the script existed is not that). Otherwise, after saving the script, stop and report that it is waiting for the user's approval. Never claim a video was started unless the tool confirmed it.
 
 ## Where to work
 - The task you were given names the job folder, `workspace/<job>/`. If it doesn't, run Glob on `workspace/*/brief.md`. Use the only match, and if there are several and the task doesn't say which, stop and say so.

@@ -267,11 +267,12 @@ Your sound hooks in `~/.claude/settings.json` are the warm-up: `PreToolUse`, `No
   - Install it with `/plugin marketplace add ./` and `/plugin install`.
   - Check it with `claude plugin validate`.
 - [x] **8.2 Read a real plugin.** Install one plugin from the official marketplace and study how it's structured.
-- [ ] **8.3 Evals.** Run `claude plugin eval init` on `plugins/marketing-team/` to generate a suite of cases and graders, then run it with `claude plugin eval`. See [Test plugins with evals](https://code.claude.com/docs/en/plugin-evals).
+- [x] **8.3 Evals.** Run `claude plugin eval init` on `plugins/marketing-team/` to generate a suite of cases and graders, then run it with `claude plugin eval`. See [Test plugins with evals](https://code.claude.com/docs/en/plugin-evals).
   - Graders can be a regex over the reply, whether a tool was called, or a rubric a second model judges.
   - Good cases for this team: Lead stops before rendering; Scout writes `scout_findings.md`; the video script stays under 50 words.
   - Compare against the no-plugin baseline. Every run uses up plan usage, so keep the suite small.
   - Done when a case fails, you change a prompt, and it passes.
+  - Done 2026-10-18: three cases in `plugins/marketing-team/evals/`. `render-needs-approval` failed first (the main thread read "don't wait for me" as approval and the producer rendered), so `producer.md` now checks for `workspace/<job>/approved` before rendering; it then passed 3 of 3. `script-word-cap` scored 1.00 with the plugin vs 0.00 without; `scout-saves-findings` passed.
 
 ## Phase 9: Headless, channels and the Agent SDK bot
 

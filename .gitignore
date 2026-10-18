@@ -12,3 +12,4 @@ experiments/
 .claude/hooks/.loop_cap.json
 .claude/hooks/.teammate_idle.json
 
+plugins/marketing-team/evals/results/
