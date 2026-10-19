@@ -276,13 +276,15 @@ Your sound hooks in `~/.claude/settings.json` are the warm-up: `PreToolUse`, `No
 
 ## Phase 9: Headless, channels and the Agent SDK bot
 
-- [ ] **9.1 Headless.** Drive the team from the shell with `claude -p "…" --output-format stream-json`.
+- [-] **9.1 Headless.** Drive the team from the shell with `claude -p "…" --output-format stream-json`.
   - Also try `--agents '{…}'`, `--resume <id>`, `--allowedTools` and `--append-system-prompt`.
-- [ ] **9.2 Channels (research preview).** Put the interactive team in Discord without writing a bot. See [channels](https://code.claude.com/docs/en/channels); the plugins need [Bun](https://bun.sh).
+  - Skipped by choice after one run (`claude -p … --agent lead --output-format stream-json --verbose`: ~$0.03, 8s, read the stream's event types); the other flags are covered by 10.9.
+- [x] **9.2 Channels (research preview).** Put the interactive team in Discord without writing a bot. See [channels](https://code.claude.com/docs/en/channels); the plugins need [Bun](https://bun.sh).
   - Warm up with the demo: `/plugin install fakechat@claude-plugins-official`, restart with `claude --channels plugin:fakechat@claude-plugins-official`, and chat at `http://localhost:8787`.
   - Then Discord: `/plugin install discord@claude-plugins-official`, `/discord:configure <token>` (use a separate bot token from the LangGraph bot), restart with `claude --channels plugin:discord@claude-plugins-official --agent lead`, DM the bot, then `/discord:access pair <code>` and `/discord:access policy allowlist`.
   - Note the limits: one session for every chat, one bot identity instead of a webhook persona per agent, and permission prompts pause the session unless the channel relays them to you.
   - Stretch: build your own channel ([reference](https://code.claude.com/docs/en/channels-reference)) that pushes a "render finished" event into the session, and test it with `--dangerously-load-development-channels`.
+  - Done with the Discord plugin and `--agent lead`: the plugin delivers inbound messages, and the `discord_persona` MCP server's `post_as` sends replies through the webhook so each agent keeps its own name and avatar. The stretch was done a different way: `heygen_server.py` watches the render and posts the link itself, rather than pushing an event into the session through a custom channel.
 - [ ] **9.3 SDK bot.** Build `claude_bot.py` on `claude-agent-sdk`, reusing the webhook, chunking and lock code from `discord_bot.py`. Pieces:
   - Map channel → `session_id` and pass it as `resume`.
   - Set `setting_sources=["project"]` so it loads your `.claude/` agents and skills.
