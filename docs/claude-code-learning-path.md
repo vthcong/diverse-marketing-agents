@@ -285,7 +285,7 @@ Your sound hooks in `~/.claude/settings.json` are the warm-up: `PreToolUse`, `No
   - Note the limits: one session for every chat, one bot identity instead of a webhook persona per agent, and permission prompts pause the session unless the channel relays them to you.
   - Stretch: build your own channel ([reference](https://code.claude.com/docs/en/channels-reference)) that pushes a "render finished" event into the session, and test it with `--dangerously-load-development-channels`.
   - Done with the Discord plugin and `--agent lead`: the plugin delivers inbound messages, and the `discord_persona` MCP server's `post_as` sends replies through the webhook so each agent keeps its own name and avatar. The stretch was done a different way: `heygen_server.py` watches the render and posts the link itself, rather than pushing an event into the session through a custom channel.
-- [ ] **9.3 SDK bot.** Build `claude_bot.py` on `claude-agent-sdk`, reusing the webhook, chunking and lock code from `discord_bot.py`. Pieces:
+- [x] **9.3 SDK bot.** Build `claude_bot.py` on `claude-agent-sdk`, reusing the webhook, chunking and lock code from `discord_bot.py`. Pieces:
   - Map channel → `session_id` and pass it as `resume`.
   - Set `setting_sources=["project"]` so it loads your `.claude/` agents and skills.
   - Implement HeyGen as in-process tools (`@tool` + `create_sdk_mcp_server`).
@@ -293,6 +293,10 @@ Your sound hooks in `~/.claude/settings.json` are the warm-up: `PreToolUse`, `No
   - Pick the posting persona from `parent_tool_use_id`.
   - Keep `_watch_render` as plain asyncio.
   - Discord messages are untrusted input to an agent with tools. Read [Securely deploying AI agents](https://code.claude.com/docs/en/agent-sdk/secure-deployment) first, and run in `dontAsk` mode with an explicit allow list (or a `can_use_tool` that denies anything not listed).
+  - Done in `claude_bot.py` (Discord, sessions, persona routing, options) and `claude_tools.py` (in-process HeyGen tools, `watch_render`, allow list, guards). Run it with `python claude_bot.py` and read `.claude/rules/claude-bot.md` for the why behind each choice. Checked live against the real model (chat, a job, resume, the producer's script, an approved render with HeyGen faked, a scout web search) and offline with `scripts/claude_bot_test.py`.
+  - The task's `dontAsk` suggestion did not work here, so it uses the `can_use_tool` alternative: `.claude/settings.json` has an `ask` rule for the render tool (5.2), `dontAsk` turns an `ask` into a refusal before a hook or callback is consulted, and an approved render could never start. Hooks cannot grant past an `ask`, only deny, so the unconditional rules (render approval, writes only in `workspace/`) are PreToolUse hooks that also fire inside subagents.
+  - Surprises worth remembering: `lead.md`'s `initialPrompt` makes the lead list the jobs instead of starting the user's request, also through the SDK, so the bot builds the lead's definition from the file without it. Subagents run in the background, so one message produces several `ResultMessage`s. Two development hooks (`smoke_gate.py`, `session_next_task.py`) now skip themselves when `CLAUDE_AGENT_SDK_VERSION` is set. Cost of a full live turn was a few tenths of a dollar (a short research request: $0.33).
+  - Not tried: the bot in a real Discord server (the probes used a fake channel and webhook), a real HeyGen render, and a timeout or crash mid-turn.
 - [ ] **9.4 Compare.** Run the same campaign through the LangGraph bot, the channel (9.2) and the SDK bot (9.3), and record routing determinism, cost and latency.
 
 ## Phase 10: Command mastery (controlling your work)
@@ -301,7 +305,7 @@ Do these drills alongside the phases above; most fit naturally once Phase 4 give
 
 **Some of these are terminal-only.** A few shortcuts and the fullscreen view (`/tui`, `/focus`) only work in the terminal CLI, not in the VS Code panel. Do those drills in a terminal: `claude` in this folder.
 
-- [ ] **10.0 Input basics.**
+- [x] **10.0 Input basics.**
   - `/` command or skill · `!` shell mode (output goes into context) · `@` file mention · `?` shortcut panel
   - Multiline: `\`+Enter, `Ctrl+J`, or Shift+Enter (run `/terminal-setup` if Shift+Enter doesn't work)
   - `Ctrl+R` history search · `Ctrl+G` edit the prompt in your editor · `Ctrl+S` stash a draft · `Ctrl+V` paste an image

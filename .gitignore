@@ -13,3 +13,6 @@ experiments/
 .claude/hooks/.teammate_idle.json
 
 plugins/marketing-team/evals/results/
+
+# Claude Code session id of each channel, for claude_bot.py
+claude_sessions.json

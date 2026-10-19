@@ -3,11 +3,15 @@
 The test only runs when the code it covers changed since the last pass: a hash of every .py file, persona prompt and skill is saved in PASS_FILE after a pass, so a turn that only talked or edited docs ends instantly. A failing test never saves a hash, so it keeps blocking. Exit code 2 blocks the stop and its stderr is shown to Claude as the reason to keep going. Claude Code ends the turn anyway after 8 blocks in a row (the count resets when Claude calls a tool), so a test that can't be fixed can't loop forever; `stop_hook_active` in the input says a previous block is already being worked on, and this hook deliberately ignores it so Claude gets all 8 tries.
 """
 import hashlib
+import os
 import subprocess
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent.parent
+if os.environ.get("CLAUDE_AGENT_SDK_VERSION"):  # set by the Agent SDK for its child process: this is a turn of claude_bot.py, not a development session, so there is no code change to gate
+    sys.exit(0)
+
+ROOT =Path(__file__).resolve().parent.parent.parent
 PASS_FILE = Path(__file__).resolve().parent / ".smoke_pass"  # gitignored
 TIMEOUT_SECONDS = 120
 COVERED = ["*.py", "personas", ".claude/skills"]  # the smoke test loads persona prompts and skills too, so editing them can break it

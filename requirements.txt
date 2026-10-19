@@ -12,3 +12,7 @@ langchain-tavily==0.2.18
 discord.py==2.7.1
 httpx==0.28.1
 python-dotenv==1.2.2
+
+# Claude Agent SDK bot (claude_bot.py); the SDK bundles the Claude Code CLI. PyYAML reads the lead agent file.
+claude-agent-sdk==0.2.168
+PyYAML==6.0.3

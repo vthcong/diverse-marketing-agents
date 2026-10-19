@@ -7,11 +7,12 @@ A LangGraph team of four LLM agents (Lead, Scout, Content, Producer) that runs m
 Dependencies are pinned in `requirements.txt` and already installed in the conda env `langchain` (Python 3.12) at `/opt/miniconda3/envs/langchain`. Use that interpreter directly rather than system `python3`.
 
 - Run the Discord bot: `/opt/miniconda3/envs/langchain/bin/python discord_bot.py`. `.env` needs `DISCORD_BOT_TOKEN`, `OPENAI_API_KEY` (every agent is an LLM; `llm.py` builds the clients at import, so it fails at startup without it), `TAVILY_API_KEY` (Scout's search) and `HEYGEN_API_KEY` / `HEYGEN_AVATAR_ID` / `HEYGEN_VOICE_ID` (video).
+- Run the Claude Agent SDK bot (the same team on Claude Code instead of LangGraph): `/opt/miniconda3/envs/langchain/bin/python claude_bot.py`. It needs no `OPENAI_API_KEY`, runs on your Claude login, and takes an optional `CLAUDE_BOT_TOKEN` (so it doesn't share a login with `discord_bot.py`) and `CLAUDE_BOT_CHANNEL_IDS`. See `.claude/rules/claude-bot.md`.
 - Never read or print `.env`; it holds live credentials.
 
 ## Testing
 
-No linter is checked in. The one test is `scripts/smoke_test.py`: run `/opt/miniconda3/envs/langchain/bin/python scripts/smoke_test.py`, or the `/smoke-test` skill. It drives two full turns through `discord_bot.handle_turn` with no Discord or real API keys: a dummy `OPENAI_API_KEY`, each `llm.LLMS[persona]` swapped for a `ChatOpenAI` over `httpx.MockTransport`, and Tavily, HeyGen and the webhook faked. The real client, tool-binding, structured-output and LangGraph paths all run; only the model's decisions are scripted. The `Stop` hook `.claude/hooks/smoke_gate.py` runs it whenever the code has changed.
+No linter is checked in. There are two tests. `scripts/claude_bot_test.py` covers the SDK bot offline (its guards, HeyGen tools, persona routing, sessions and lock, with a scripted SDK stream and nothing live); the `Stop` hook does not run it. The other is `scripts/smoke_test.py`, for the LangGraph bot: run `/opt/miniconda3/envs/langchain/bin/python scripts/smoke_test.py`, or the `/smoke-test` skill. It drives two full turns through `discord_bot.handle_turn` with no Discord or real API keys: a dummy `OPENAI_API_KEY`, each `llm.LLMS[persona]` swapped for a `ChatOpenAI` over `httpx.MockTransport`, and Tavily, HeyGen and the webhook faked. The real client, tool-binding, structured-output and LangGraph paths all run; only the model's decisions are scripted. The `Stop` hook `.claude/hooks/smoke_gate.py` runs it whenever the code has changed.
 
 ## Error handling policy
 

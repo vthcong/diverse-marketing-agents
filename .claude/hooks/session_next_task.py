@@ -2,9 +2,14 @@
 
 Whatever a SessionStart hook prints to stdout is added to Claude's context. The task line is followed by its indented sub-bullets, up to the next task or heading.
 """
+import os
+import sys
 from pathlib import Path
 
-PATH = Path(__file__).resolve().parent.parent.parent / "docs" / "claude-code-learning-path.md"
+if os.environ.get("CLAUDE_AGENT_SDK_VERSION"):  # set by the Agent SDK for its child process: a claude_bot.py session is the marketing team, and the learning path is none of its business
+    sys.exit(0)
+
+PATH =Path(__file__).resolve().parent.parent.parent / "docs" / "claude-code-learning-path.md"
 
 lines = PATH.read_text().splitlines()
 start = next((i for i, line in enumerate(lines) if line.startswith("- [ ]")), None)
